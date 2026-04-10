@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, Eye } from "lucide-react";
-import type { Post } from "@/data/mockData";
+import type { DbPost } from "@/types/database";
 
 interface PostCardProps {
-  post: Post;
+  post: DbPost;
   featured?: boolean;
 }
 
@@ -20,7 +20,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
       <Link to={`/blog/${post.slug}`} className="block">
         <div className={`overflow-hidden ${featured ? "h-full min-h-[250px]" : "aspect-video"}`}>
           <img
-            src={post.featuredImage}
+            src={post.featured_image || "/placeholder.svg"}
             alt={post.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
@@ -31,10 +31,10 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
         <div>
           <div className="flex items-center gap-3 mb-3">
             <span className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full">
-              {post.category}
+              {post.categories?.name ?? "Uncategorized"}
             </span>
             <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Clock className="w-3 h-3" /> {post.readingTime} min
+              <Clock className="w-3 h-3" /> {post.reading_time ?? 5} min
             </span>
           </div>
           <Link to={`/blog/${post.slug}`}>
@@ -48,17 +48,19 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
         </div>
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
           <div className="flex items-center gap-2">
-            <img
-              src={post.author.avatar}
-              alt={post.author.name}
-              className="w-7 h-7 rounded-full object-cover"
-              loading="lazy"
-            />
-            <span className="text-xs text-muted-foreground">{post.author.name}</span>
+            {post.authors?.avatar && (
+              <img
+                src={post.authors.avatar}
+                alt={post.authors.name}
+                className="w-7 h-7 rounded-full object-cover"
+                loading="lazy"
+              />
+            )}
+            <span className="text-xs text-muted-foreground">{post.authors?.name ?? "Unknown"}</span>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{(post.views / 1000).toFixed(1)}k</span>
-            <span>{new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+            <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{((post.views ?? 0) / 1000).toFixed(1)}k</span>
+            <span>{new Date(post.published_at || post.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
           </div>
         </div>
       </div>

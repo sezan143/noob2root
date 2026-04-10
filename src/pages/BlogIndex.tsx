@@ -1,17 +1,38 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import PostCard from "@/components/blog/PostCard";
-import { posts, categories } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+import type { DbPost, DbCategory } from "@/types/database";
 
 type SortOption = "newest" | "popular" | "reading-time";
 
 const BlogIndex = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [posts, setPosts] = useState<DbPost[]>([]);
+  const [categories, setCategories] = useState<DbCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [postsRes, catsRes] = await Promise.all([
+        supabase
+          .from("posts")
+          .select("*, authors(*), categories(*)")
+          .eq("is_published", true)
+          .order("published_at", { ascending: false }),
+        supabase.from("categories").select("*").order("name"),
+      ]);
+      setPosts((postsRes.data as DbPost[]) ?? []);
+      setCategories(catsRes.data ?? []);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   const filteredPosts = useMemo(() => {
     let result = [...posts];
@@ -21,29 +42,36 @@ const BlogIndex = () => {
       result = result.filter(
         (p) =>
           p.title.toLowerCase().includes(q) ||
-          p.excerpt.toLowerCase().includes(q) ||
-          p.tags.some((t) => t.toLowerCase().includes(q))
+          (p.excerpt ?? "").toLowerCase().includes(q) ||
+          (p.tags ?? []).some((t) => t.toLowerCase().includes(q))
       );
     }
 
     if (selectedCategory !== "all") {
-      const cat = categories.find((c) => c.slug === selectedCategory);
-      if (cat) result = result.filter((p) => p.category === cat.name);
+      result = result.filter((p) => p.categories?.slug === selectedCategory);
     }
 
     switch (sortBy) {
       case "popular":
-        result.sort((a, b) => b.views - a.views);
+        result.sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
         break;
       case "reading-time":
-        result.sort((a, b) => a.readingTime - b.readingTime);
+        result.sort((a, b) => (a.reading_time ?? 0) - (b.reading_time ?? 0));
         break;
       default:
-        result.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+        result.sort((a, b) => new Date(b.published_at ?? b.created_at).getTime() - new Date(a.published_at ?? a.created_at).getTime());
     }
 
     return result;
-  }, [searchQuery, selectedCategory, sortBy]);
+  }, [posts, searchQuery, selectedCategory, sortBy]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

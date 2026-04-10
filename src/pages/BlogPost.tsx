@@ -1,14 +1,54 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Clock, Eye, Calendar, ArrowLeft, Share2, Twitter, Linkedin } from "lucide-react";
+import { Clock, Eye, Calendar, Share2, Twitter, Linkedin, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
 import PostCard from "@/components/blog/PostCard";
-import { posts } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+import type { DbPost } from "@/types/database";
 
 const BlogPost = () => {
   const { slug } = useParams();
-  const post = posts.find((p) => p.slug === slug);
+  const [post, setPost] = useState<DbPost | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<DbPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      const { data } = await supabase
+        .from("posts")
+        .select("*, authors(*), categories(*)")
+        .eq("slug", slug!)
+        .eq("is_published", true)
+        .single();
+
+      if (data) {
+        setPost(data as DbPost);
+        // Fetch related posts from same category
+        if (data.category_id) {
+          const { data: related } = await supabase
+            .from("posts")
+            .select("*, authors(*), categories(*)")
+            .eq("is_published", true)
+            .eq("category_id", data.category_id)
+            .neq("id", data.id)
+            .limit(3);
+          setRelatedPosts((related as DbPost[]) ?? []);
+        }
+      }
+      setLoading(false);
+    };
+    fetchPost();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      </Layout>
+    );
+  }
 
   if (!post) {
     return (
@@ -21,12 +61,9 @@ const BlogPost = () => {
     );
   }
 
-  const relatedPosts = posts.filter((p) => p.id !== post.id && p.category === post.category).slice(0, 3);
-  const headings = post.content.match(/^## .+$/gm)?.map((h) => h.replace("## ", "")) || [];
-
+  const headings = post.content?.match(/^## .+$/gm)?.map((h) => h.replace("## ", "")) || [];
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
-  // Simple markdown to HTML
   const renderContent = (content: string) => {
     return content
       .split("\n")
@@ -36,7 +73,6 @@ const BlogPost = () => {
         if (line.startsWith("> ")) return <blockquote key={i} className="border-l-2 border-primary pl-4 italic text-muted-foreground my-4">{line.replace("> ", "")}</blockquote>;
         if (line.startsWith("```")) return null;
         if (line.trim() === "") return <br key={i} />;
-        // Code block lines
         if (line.startsWith("//") || line.startsWith("export ") || line.startsWith("  ") || line.startsWith("const ") || line.startsWith("import ") || line.startsWith("});") || line.startsWith("}") || line.startsWith("{")) {
           return <code key={i} className="block font-mono text-sm text-primary/80 bg-muted/50 px-4 py-0.5">{line}</code>;
         }
@@ -58,45 +94,50 @@ const BlogPost = () => {
         </nav>
 
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* Main content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex-1 max-w-3xl"
           >
             <span className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full">
-              {post.category}
+              {post.categories?.name ?? "Uncategorized"}
             </span>
             <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mt-4 mb-4 leading-tight">
               {post.title}
             </h1>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
-              <div className="flex items-center gap-2">
-                <img src={post.author.avatar} alt={post.author.name} className="w-8 h-8 rounded-full object-cover" />
-                <span>{post.author.name}</span>
-              </div>
-              <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(post.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
-              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{post.readingTime} min read</span>
-              <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{post.views.toLocaleString()} views</span>
+              {post.authors && (
+                <div className="flex items-center gap-2">
+                  {post.authors.avatar && <img src={post.authors.avatar} alt={post.authors.name} className="w-8 h-8 rounded-full object-cover" />}
+                  <span>{post.authors.name}</span>
+                </div>
+              )}
+              <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{new Date(post.published_at || post.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{post.reading_time ?? 5} min read</span>
+              <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{(post.views ?? 0).toLocaleString()} views</span>
             </div>
 
-            <div className="rounded-xl overflow-hidden mb-8">
-              <img src={post.featuredImage} alt={post.title} className="w-full aspect-video object-cover" />
-            </div>
+            {post.featured_image && (
+              <div className="rounded-xl overflow-hidden mb-8">
+                <img src={post.featured_image} alt={post.title} className="w-full aspect-video object-cover" />
+              </div>
+            )}
 
             <div className="prose-custom">
-              {renderContent(post.content)}
+              {post.content && renderContent(post.content)}
             </div>
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-border">
-              {post.tags.map((tag) => (
-                <span key={tag} className="text-xs px-3 py-1 rounded-full bg-muted text-muted-foreground">
-                  #{tag}
-                </span>
-              ))}
-            </div>
+            {(post.tags ?? []).length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-border">
+                {(post.tags ?? []).map((tag) => (
+                  <span key={tag} className="text-xs px-3 py-1 rounded-full bg-muted text-muted-foreground">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Share */}
             <div className="flex items-center gap-3 mt-6">
@@ -110,14 +151,16 @@ const BlogPost = () => {
             </div>
 
             {/* Author Bio */}
-            <div className="glass-card p-6 mt-8 flex flex-col sm:flex-row gap-4">
-              <img src={post.author.avatar} alt={post.author.name} className="w-16 h-16 rounded-full object-cover" />
-              <div>
-                <p className="font-heading font-semibold text-foreground">{post.author.name}</p>
-                <p className="text-xs text-primary mb-2">{post.author.role}</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">{post.author.bio}</p>
+            {post.authors && (
+              <div className="glass-card p-6 mt-8 flex flex-col sm:flex-row gap-4">
+                {post.authors.avatar && <img src={post.authors.avatar} alt={post.authors.name} className="w-16 h-16 rounded-full object-cover" />}
+                <div>
+                  <p className="font-heading font-semibold text-foreground">{post.authors.name}</p>
+                  <p className="text-xs text-primary mb-2">{post.authors.role}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{post.authors.bio}</p>
+                </div>
               </div>
-            </div>
+            )}
           </motion.div>
 
           {/* Sidebar / TOC */}

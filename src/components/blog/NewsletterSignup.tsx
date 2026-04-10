@@ -1,17 +1,36 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const NewsletterSignup = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
+    if (!email.trim()) return;
+    setLoading(true);
+
+    const { error } = await supabase
+      .from("newsletter_subscribers")
+      .insert({ email: email.trim() });
+
+    if (error) {
+      if (error.code === "23505") {
+        toast({ title: "You're already subscribed!" });
+        setSubmitted(true);
+      } else {
+        toast({ title: "Something went wrong", description: error.message, variant: "destructive" });
+      }
+    } else {
       setSubmitted(true);
-      setEmail("");
     }
+    setEmail("");
+    setLoading(false);
   };
 
   return (
@@ -51,9 +70,10 @@ const NewsletterSignup = () => {
               />
               <button
                 type="submit"
-                className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 neon-glow"
+                disabled={loading}
+                className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 neon-glow disabled:opacity-50"
               >
-                Subscribe <Send className="w-4 h-4" />
+                {loading ? "..." : "Subscribe"} <Send className="w-4 h-4" />
               </button>
             </form>
           )}
