@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save, Eye, ArrowLeft } from "lucide-react";
+import { Loader2, Save, Eye, ArrowLeft, Upload, ImageIcon, Megaphone } from "lucide-react";
 
 interface CategoryOption { id: string; name: string; }
 interface AuthorOption { id: string; name: string; }
@@ -20,9 +20,11 @@ export default function PostEditor() {
   const isNew = id === "new";
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [authors, setAuthors] = useState<AuthorOption[]>([]);
 
@@ -40,8 +42,31 @@ export default function PostEditor() {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
 
+  // Ad/Promotion fields
+  const [isSponsored, setIsSponsored] = useState(false);
+  const [sponsorName, setSponsorName] = useState("");
+  const [sponsorUrl, setSponsorUrl] = useState("");
+  const [sponsorLogo, setSponsorLogo] = useState("");
+  const [adBannerImage, setAdBannerImage] = useState("");
+  const [adBannerUrl, setAdBannerUrl] = useState("");
+
   const generateSlug = (text: string) =>
     text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+  const handleImageUpload = async (file: File, onSuccess: (url: string) => void) => {
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("post-images").upload(path, file);
+    if (error) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    } else {
+      const { data } = supabase.storage.from("post-images").getPublicUrl(path);
+      onSuccess(data.publicUrl);
+      toast({ title: "Image uploaded!" });
+    }
+    setUploading(false);
+  };
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -74,6 +99,12 @@ export default function PostEditor() {
         setIsFeatured(data.is_featured ?? false);
         setMetaTitle(data.meta_title ?? "");
         setMetaDescription(data.meta_description ?? "");
+        setIsSponsored((data as any).is_sponsored ?? false);
+        setSponsorName((data as any).sponsor_name ?? "");
+        setSponsorUrl((data as any).sponsor_url ?? "");
+        setSponsorLogo((data as any).sponsor_logo ?? "");
+        setAdBannerImage((data as any).ad_banner_image ?? "");
+        setAdBannerUrl((data as any).ad_banner_url ?? "");
         setLoading(false);
       });
     }
@@ -86,7 +117,7 @@ export default function PostEditor() {
     }
     setSaving(true);
 
-    const postData = {
+    const postData: Record<string, any> = {
       title: title.trim(),
       slug: slug.trim(),
       excerpt: excerpt.trim() || null,
@@ -101,6 +132,12 @@ export default function PostEditor() {
       meta_title: metaTitle || null,
       meta_description: metaDescription || null,
       published_at: (publish || isPublished) ? new Date().toISOString() : null,
+      is_sponsored: isSponsored,
+      sponsor_name: sponsorName || null,
+      sponsor_url: sponsorUrl || null,
+      sponsor_logo: sponsorLogo || null,
+      ad_banner_image: adBannerImage || null,
+      ad_banner_url: adBannerUrl || null,
     };
 
     let error;
@@ -145,6 +182,7 @@ export default function PostEditor() {
         <TabsList>
           <TabsTrigger value="content">Content</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="promotion">Promotion</TabsTrigger>
           <TabsTrigger value="seo">SEO</TabsTrigger>
         </TabsList>
 
@@ -169,9 +207,37 @@ export default function PostEditor() {
 
         <TabsContent value="settings" className="space-y-4 mt-4">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Featured Image URL</Label>
-              <Input value={featuredImage} onChange={(e) => setFeaturedImage(e.target.value)} placeholder="https://..." />
+            {/* Featured Image Upload */}
+            <div className="space-y-2 md:col-span-2">
+              <Label>Featured Image</Label>
+              <div className="flex gap-3 items-start">
+                <div className="flex-1">
+                  <Input value={featuredImage} onChange={(e) => setFeaturedImage(e.target.value)} placeholder="Image URL or upload below" />
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImageUpload(file, setFeaturedImage);
+                  }}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                >
+                  {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                  Upload
+                </Button>
+              </div>
+              {featuredImage && (
+                <div className="mt-2 rounded-lg overflow-hidden border border-border">
+                  <img src={featuredImage} alt="Featured" className="w-full max-h-48 object-cover" />
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label>Category</Label>
@@ -210,6 +276,97 @@ export default function PostEditor() {
               <div className="flex items-center justify-between">
                 <Label>Featured</Label>
                 <Switch checked={isFeatured} onCheckedChange={setIsFeatured} />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Promotion Tab */}
+        <TabsContent value="promotion" className="space-y-4 mt-4">
+          <Card className="glass-card border-border/50">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5 text-primary" />
+                <CardTitle>Sponsored Content</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Mark as Sponsored</Label>
+                  <p className="text-sm text-muted-foreground">Displays a "Sponsored" badge on the post</p>
+                </div>
+                <Switch checked={isSponsored} onCheckedChange={setIsSponsored} />
+              </div>
+              {isSponsored && (
+                <div className="grid gap-4 md:grid-cols-2 pt-2">
+                  <div className="space-y-2">
+                    <Label>Sponsor Name</Label>
+                    <Input value={sponsorName} onChange={(e) => setSponsorName(e.target.value)} placeholder="Acme Corp" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Sponsor URL</Label>
+                    <Input value={sponsorUrl} onChange={(e) => setSponsorUrl(e.target.value)} placeholder="https://sponsor.com" />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Sponsor Logo URL</Label>
+                    <div className="flex gap-3">
+                      <Input value={sponsorLogo} onChange={(e) => setSponsorLogo(e.target.value)} placeholder="https://..." className="flex-1" />
+                      <Button variant="outline" onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "image/*";
+                        input.onchange = (e: any) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleImageUpload(file, setSponsorLogo);
+                        };
+                        input.click();
+                      }} disabled={uploading}>
+                        <Upload className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {sponsorLogo && <img src={sponsorLogo} alt="Sponsor" className="h-10 mt-1 object-contain" />}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card border-border/50">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <ImageIcon className="h-5 w-5 text-secondary" />
+                <CardTitle>Ad Banner</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">Optional banner ad displayed within the post</p>
+              <div className="space-y-2">
+                <Label>Banner Image URL</Label>
+                <div className="flex gap-3">
+                  <Input value={adBannerImage} onChange={(e) => setAdBannerImage(e.target.value)} placeholder="https://..." className="flex-1" />
+                  <Button variant="outline" onClick={() => {
+                    const input = document.createElement("input");
+                    input.type = "file";
+                    input.accept = "image/*";
+                    input.onchange = (e: any) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleImageUpload(file, setAdBannerImage);
+                    };
+                    input.click();
+                  }} disabled={uploading}>
+                    <Upload className="h-4 w-4" />
+                  </Button>
+                </div>
+                {adBannerImage && (
+                  <div className="mt-2 rounded-lg overflow-hidden border border-border">
+                    <img src={adBannerImage} alt="Ad banner preview" className="w-full max-h-32 object-cover" />
+                  </div>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Banner Click URL</Label>
+                <Input value={adBannerUrl} onChange={(e) => setAdBannerUrl(e.target.value)} placeholder="https://sponsor.com/promo" />
               </div>
             </CardContent>
           </Card>
