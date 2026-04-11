@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText, FolderOpen, Users, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, FolderOpen, Users, LogOut, Settings } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,6 +12,7 @@ const items = [
   { title: "Posts", url: "/admin/posts", icon: FileText },
   { title: "Categories", url: "/admin/categories", icon: FolderOpen },
   { title: "Authors", url: "/admin/authors", icon: Users },
+  { title: "Settings", url: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {

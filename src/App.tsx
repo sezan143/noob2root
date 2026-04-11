@@ -17,6 +17,7 @@ import AdminPosts from "./pages/admin/AdminPosts.tsx";
 import PostEditor from "./pages/admin/PostEditor.tsx";
 import AdminCategories from "./pages/admin/AdminCategories.tsx";
 import AdminAuthors from "./pages/admin/AdminAuthors.tsx";
+import AdminSettings from "./pages/admin/AdminSettings.tsx";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="posts/:id" element={<PostEditor />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="authors" element={<AdminAuthors />} />
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
