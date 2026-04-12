@@ -49,7 +49,7 @@ export function EditorToolbar({
   showLinkInput, linkUrl, onLinkUrlChange, onLinkSubmit,
 }: EditorToolbarProps) {
   return (
-    <div className="border-b border-border/50 bg-muted/30">
+    <div className="border-b border-border/50 bg-muted/30 sticky top-0 z-10">
       <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5">
         <ToolBtn icon={Undo} label="Undo" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} />
         <ToolBtn icon={Redo} label="Redo" onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} />
