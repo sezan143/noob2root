@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save, Eye, ArrowLeft, Upload, ImageIcon, Megaphone } from "lucide-react";
+import { RichTextEditor } from "@/components/editor/RichTextEditor";
 
 interface CategoryOption { id: string; name: string; }
 interface AuthorOption { id: string; name: string; }
