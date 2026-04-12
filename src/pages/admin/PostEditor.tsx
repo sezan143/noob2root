@@ -61,12 +61,27 @@ export default function PostEditor() {
     const { error } = await supabase.storage.from("post-images").upload(path, file);
     if (error) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-    } else {
-      const { data } = supabase.storage.from("post-images").getPublicUrl(path);
-      onSuccess(data.publicUrl);
-      toast({ title: "Image uploaded!" });
+      setUploading(false);
+      return "";
     }
+    const { data } = supabase.storage.from("post-images").getPublicUrl(path);
+    onSuccess(data.publicUrl);
+    toast({ title: "Image uploaded!" });
     setUploading(false);
+    return data.publicUrl;
+  };
+
+  const handleEditorImageUpload = async (file: File): Promise<string> => {
+    const ext = file.name.split(".").pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("post-images").upload(path, file);
+    if (error) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      return "";
+    }
+    const { data } = supabase.storage.from("post-images").getPublicUrl(path);
+    toast({ title: "Image uploaded!" });
+    return data.publicUrl;
   };
 
   useEffect(() => {
