@@ -64,9 +64,8 @@ const BlogPost = () => {
   // Extract headings from HTML content
   const headings = post.content
     ? [...(post.content.matchAll(/<h2[^>]*>(.*?)<\/h2>/gi))].map((m) => m[1].replace(/<[^>]*>/g, ""))
-    : [];
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
 
-  return (
     <Layout>
       <ReadingProgressBar />
       <article className="container mx-auto px-4 py-12">
