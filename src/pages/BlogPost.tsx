@@ -61,24 +61,10 @@ const BlogPost = () => {
     );
   }
 
-  const headings = post.content?.match(/^## .+$/gm)?.map((h) => h.replace("## ", "")) || [];
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
-
-  const renderContent = (content: string) => {
-    return content
-      .split("\n")
-      .map((line, i) => {
-        if (line.startsWith("### ")) return <h3 key={i} className="text-lg font-heading font-semibold text-foreground mt-8 mb-3">{line.replace("### ", "")}</h3>;
-        if (line.startsWith("## ")) return <h2 key={i} id={line.replace("## ", "").toLowerCase().replace(/\s+/g, "-")} className="text-xl font-heading font-bold text-foreground mt-10 mb-4">{line.replace("## ", "")}</h2>;
-        if (line.startsWith("> ")) return <blockquote key={i} className="border-l-2 border-primary pl-4 italic text-muted-foreground my-4">{line.replace("> ", "")}</blockquote>;
-        if (line.startsWith("```")) return null;
-        if (line.trim() === "") return <br key={i} />;
-        if (line.startsWith("//") || line.startsWith("export ") || line.startsWith("  ") || line.startsWith("const ") || line.startsWith("import ") || line.startsWith("});") || line.startsWith("}") || line.startsWith("{")) {
-          return <code key={i} className="block font-mono text-sm text-primary/80 bg-muted/50 px-4 py-0.5">{line}</code>;
-        }
-        return <p key={i} className="text-foreground/80 leading-relaxed mb-3">{line}</p>;
-      });
-  };
+  // Extract headings from HTML content
+  const headings = post.content
+    ? [...(post.content.matchAll(/<h2[^>]*>(.*?)<\/h2>/gi))].map((m) => m[1].replace(/<[^>]*>/g, ""))
+    : [];
 
   return (
     <Layout>
