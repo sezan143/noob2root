@@ -216,8 +216,13 @@ export default function PostEditor() {
             <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Brief summary..." rows={3} />
           </div>
           <div className="space-y-2">
-            <Label>Content (Markdown)</Label>
-            <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your post content in markdown..." rows={20} className="font-mono text-sm" />
+            <Label>Content</Label>
+            <RichTextEditor
+              content={content}
+              onChange={setContent}
+              placeholder="Start writing your post..."
+              onImageUpload={handleEditorImageUpload}
+            />
           </div>
         </TabsContent>
 
