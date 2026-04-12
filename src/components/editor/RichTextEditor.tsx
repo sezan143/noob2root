@@ -160,23 +160,6 @@ export function RichTextEditor({ content, onChange, placeholder, onImageUpload }
         }}
       />
 
-      {editor && (
-        <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }} className="flex items-center gap-1 rounded-lg border border-border bg-popover p-1 shadow-xl">
-          <button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`p-1.5 rounded text-xs font-bold ${editor.isActive("bold") ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}
-          >B</button>
-          <button
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`p-1.5 rounded text-xs italic ${editor.isActive("italic") ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}
-          >I</button>
-          <button
-            onClick={() => editor.chain().focus().toggleHighlight().run()}
-            className={`p-1.5 rounded text-xs ${editor.isActive("highlight") ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}
-          >H</button>
-        </BubbleMenu>
-      )}
-
       <EditorContent editor={editor} />
 
       <div className="flex items-center justify-between px-4 py-2 border-t border-border/30 text-xs text-muted-foreground">
