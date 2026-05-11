@@ -11,6 +11,8 @@ import Categories from "./pages/Categories.tsx";
 import About from "./pages/About.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
+import Login from "./pages/Login.tsx";
+import Profile from "./pages/Profile.tsx";
 import AdminLayout from "./components/admin/AdminLayout.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminPosts from "./pages/admin/AdminPosts.tsx";
@@ -44,6 +46,8 @@ const App = () => (
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:slug" element={<CourseDetail />} />
             <Route path="/courses/:slug/learn" element={<CourseLearn />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
