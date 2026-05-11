@@ -42,7 +42,7 @@ export default function CourseLearn() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
-      navigate(`/admin/login?redirect=/courses/${slug}/learn`);
+      navigate(`/login?redirect=${encodeURIComponent(`/courses/${slug}/learn`)}`);
       return;
     }
     if (!slug) return;
