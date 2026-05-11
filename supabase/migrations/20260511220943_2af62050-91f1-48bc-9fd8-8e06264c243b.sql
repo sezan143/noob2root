@@ -1,0 +1,1 @@
+ALTER TABLE public.courses ADD CONSTRAINT courses_slug_unique UNIQUE (slug);
