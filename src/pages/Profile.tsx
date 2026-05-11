@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -52,6 +53,10 @@ export default function Profile() {
 
   const [displayName, setDisplayName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
   const [saving, setSaving] = useState(false);
 
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
@@ -61,6 +66,10 @@ export default function Profile() {
   useEffect(() => {
     setDisplayName(profile?.display_name ?? "");
     setAvatarUrl(profile?.avatar_url ?? "");
+    setFirstName(profile?.first_name ?? "");
+    setLastName(profile?.last_name ?? "");
+    setUsername(profile?.username ?? "");
+    setBio(profile?.bio ?? "");
   }, [profile]);
 
   useEffect(() => {
@@ -158,19 +167,29 @@ export default function Profile() {
 
   const saveProfile = async () => {
     setSaving(true);
+    const computedDisplay =
+      [firstName.trim(), lastName.trim()].filter(Boolean).join(" ") || displayName || null;
     const { error } = await supabase
       .from("profiles")
       .upsert(
         {
           user_id: user.id,
-          display_name: displayName || null,
+          display_name: computedDisplay,
+          first_name: firstName.trim() || null,
+          last_name: lastName.trim() || null,
+          username: username.trim() || null,
+          bio: bio.trim() || null,
           avatar_url: avatarUrl || null,
         },
         { onConflict: "user_id" }
       );
     setSaving(false);
     if (error) {
-      toast.error(error.message);
+      if (error.message.toLowerCase().includes("unique") || (error as { code?: string }).code === "23505") {
+        toast.error("That username is already taken.");
+      } else {
+        toast.error(error.message);
+      }
       return;
     }
     toast.success("Profile updated");
@@ -265,13 +284,34 @@ export default function Profile() {
                   <Label>Email</Label>
                   <Input value={user.email ?? ""} disabled />
                 </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fn">First name</Label>
+                    <Input id="fn" value={firstName} onChange={(e) => setFirstName(e.target.value)} maxLength={50} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ln">Last name</Label>
+                    <Input id="ln" value={lastName} onChange={(e) => setLastName(e.target.value)} maxLength={50} />
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dn">Display name</Label>
+                  <Label htmlFor="un">Username</Label>
                   <Input
-                    id="dn"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Your name"
+                    id="un"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    maxLength={20}
+                    placeholder="ada_root"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Short intro</Label>
+                  <Textarea
+                    id="bio"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    maxLength={280}
+                    rows={3}
                   />
                 </div>
                 <div className="space-y-2">

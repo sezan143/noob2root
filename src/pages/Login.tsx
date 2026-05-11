@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ChevronLeft } from "lucide-react";
+import { Loader2, ChevronLeft, MailCheck } from "lucide-react";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 
@@ -18,11 +18,23 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "signup") {
+      if (password.length < 6) {
+        toast.error("Password must be at least 6 characters.");
+        return;
+      }
+      if (password !== confirm) {
+        toast.error("Passwords don't match.");
+        return;
+      }
+    }
     setLoading(true);
     const { error } =
       mode === "signin" ? await signIn(email, password) : await signUp(email, password);
@@ -32,6 +44,7 @@ export default function Login() {
       return;
     }
     if (mode === "signup") {
+      setSignedUpEmail(email);
       toast.success("Account created — check your email to verify.");
     } else {
       toast.success("Welcome back!");
@@ -60,49 +73,95 @@ export default function Login() {
             <span className="text-2xl font-heading font-bold text-muted-foreground">2</span>
             <span className="text-2xl font-heading font-bold">Root</span>
           </div>
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Sign in or create an account to start learning.</CardDescription>
+          <CardTitle className="text-xl">
+            {signedUpEmail ? "Check your inbox" : "Welcome"}
+          </CardTitle>
+          <CardDescription>
+            {signedUpEmail
+              ? "We sent a verification link to confirm your email."
+              : "Sign in or create an account to start learning."}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs value={mode} onValueChange={(v) => setMode(v as "signin" | "signup")}>
-            <TabsList className="grid grid-cols-2 w-full mb-5">
-              <TabsTrigger value="signin">Sign in</TabsTrigger>
-              <TabsTrigger value="signup">Create account</TabsTrigger>
-            </TabsList>
-            <TabsContent value={mode}>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                    required
-                    minLength={6}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                  />
-                </div>
-                <Button type="submit" className="w-full font-semibold" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {mode === "signin" ? "Sign in" : "Create account"}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+          {signedUpEmail ? (
+            <div className="text-center space-y-4 py-4">
+              <div className="w-16 h-16 mx-auto rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center">
+                <MailCheck className="w-8 h-8 text-primary" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                We sent a verification link to{" "}
+                <span className="text-foreground font-medium">{signedUpEmail}</span>.
+                Click it to activate your account, then complete your profile.
+              </p>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  setSignedUpEmail(null);
+                  setMode("signin");
+                  setPassword("");
+                  setConfirm("");
+                }}
+              >
+                Back to sign in
+              </Button>
+            </div>
+          ) : (
+            <Tabs value={mode} onValueChange={(v) => setMode(v as "signin" | "signup")}>
+              <TabsList className="grid grid-cols-2 w-full mb-5">
+                <TabsTrigger value="signin">Sign in</TabsTrigger>
+                <TabsTrigger value="signup">Create account</TabsTrigger>
+              </TabsList>
+              <TabsContent value={mode}>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                      required
+                      minLength={6}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  {mode === "signup" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm">Confirm password</Label>
+                      <Input
+                        id="confirm"
+                        type="password"
+                        autoComplete="new-password"
+                        required
+                        minLength={6}
+                        value={confirm}
+                        onChange={(e) => setConfirm(e.target.value)}
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  )}
+                  <Button type="submit" className="w-full font-semibold" disabled={loading}>
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {mode === "signin" ? "Sign in" : "Create account"}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          )}
           <p className="text-center text-xs text-muted-foreground mt-5">
             By continuing you agree to our terms and privacy policy.
           </p>

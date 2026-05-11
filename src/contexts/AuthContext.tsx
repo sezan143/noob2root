@@ -5,6 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 export interface Profile {
   display_name: string | null;
   avatar_url: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  username: string | null;
+  bio: string | null;
+  profile_completed: boolean;
 }
 
 interface AuthContextType {
@@ -23,6 +28,8 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const useAuth = () => useContext(AuthContext);
 
+const PROFILE_FIELDS = "display_name, avatar_url, first_name, last_name, username, bio, profile_completed";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -33,10 +40,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadUserData = async (userId: string) => {
     const [{ data: roleData }, { data: profileData }] = await Promise.all([
       supabase.from("user_roles").select("role").eq("user_id", userId).eq("role", "admin").maybeSingle(),
-      supabase.from("profiles").select("display_name, avatar_url").eq("user_id", userId).maybeSingle(),
+      supabase.from("profiles").select(PROFILE_FIELDS).eq("user_id", userId).maybeSingle(),
     ]);
     setIsAdmin(!!roleData);
-    setProfile((profileData as Profile) ?? { display_name: null, avatar_url: null });
+    setProfile(
+      (profileData as Profile) ?? {
+        display_name: null,
+        avatar_url: null,
+        first_name: null,
+        last_name: null,
+        username: null,
+        bio: null,
+        profile_completed: false,
+      }
+    );
   };
 
   const refreshProfile = async () => {
@@ -79,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/` },
+      options: { emailRedirectTo: `${window.location.origin}/complete-profile` },
     });
     return { error: error as Error | null };
   };
