@@ -77,8 +77,8 @@ export async function fetchCourseFull(slug: string) {
     .order("sort_order");
 
   return {
-    course: course as Course,
-    modules: (modules ?? []) as Module[],
-    lessons: (lessons ?? []) as Lesson[],
+    course: course as unknown as Course,
+    modules: (modules ?? []) as unknown as Module[],
+    lessons: (lessons ?? []) as unknown as Lesson[],
   };
 }
