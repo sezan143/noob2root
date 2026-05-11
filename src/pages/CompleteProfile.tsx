@@ -8,6 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -23,6 +28,8 @@ export default function CompleteProfile() {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [dob, setDob] = useState<Date | undefined>(undefined);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -34,6 +41,8 @@ export default function CompleteProfile() {
       setLastName(profile.last_name ?? "");
       setUsername(profile.username ?? "");
       setBio(profile.bio ?? "");
+      setMobile(profile.mobile_number ?? "");
+      setDob(profile.date_of_birth ? new Date(profile.date_of_birth) : undefined);
       setAvatarUrl(profile.avatar_url ?? null);
     }
   }, [profile]);
@@ -86,6 +95,11 @@ export default function CompleteProfile() {
       toast.error("Please enter your first and last name.");
       return;
     }
+    const mob = mobile.trim();
+    if (!mob || !/^\+?[0-9\s\-()]{7,20}$/.test(mob)) {
+      toast.error("Please enter a valid mobile number.");
+      return;
+    }
     if (username && !/^[a-zA-Z0-9_]{3,20}$/.test(username.trim())) {
       toast.error("Username must be 3–20 letters, numbers, or underscores.");
       return;
@@ -101,6 +115,8 @@ export default function CompleteProfile() {
           last_name: ln,
           username: username.trim() || null,
           bio: bio.trim() || null,
+          mobile_number: mob,
+          date_of_birth: dob ? format(dob, "yyyy-MM-dd") : null,
           display_name: display,
           avatar_url: avatarUrl,
           profile_completed: true,
@@ -216,6 +232,56 @@ export default function CompleteProfile() {
                   placeholder="ada_root"
                 />
                 <p className="text-xs text-muted-foreground">3–20 chars. Letters, numbers, underscore.</p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="mob">
+                    Mobile number <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="mob"
+                    type="tel"
+                    required
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    maxLength={20}
+                    placeholder="+1 555 123 4567"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>
+                    Date of birth <span className="text-muted-foreground text-xs">(optional)</span>
+                  </Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !dob && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4 opacity-60" />
+                        {dob ? format(dob, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={dob}
+                        onSelect={setDob}
+                        captionLayout="dropdown-buttons"
+                        fromYear={1925}
+                        toYear={new Date().getFullYear()}
+                        disabled={(d) => d > new Date() || d < new Date("1925-01-01")}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
 
               <div className="space-y-2">

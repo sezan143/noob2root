@@ -9,6 +9,8 @@ export interface Profile {
   last_name: string | null;
   username: string | null;
   bio: string | null;
+  mobile_number: string | null;
+  date_of_birth: string | null;
   profile_completed: boolean;
 }
 
@@ -28,7 +30,8 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const useAuth = () => useContext(AuthContext);
 
-const PROFILE_FIELDS = "display_name, avatar_url, first_name, last_name, username, bio, profile_completed";
+const PROFILE_FIELDS =
+  "display_name, avatar_url, first_name, last_name, username, bio, mobile_number, date_of_birth, profile_completed";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -51,6 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         last_name: null,
         username: null,
         bio: null,
+        mobile_number: null,
+        date_of_birth: null,
         profile_completed: false,
       }
     );
