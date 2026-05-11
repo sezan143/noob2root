@@ -13,6 +13,8 @@ import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import Login from "./pages/Login.tsx";
 import Profile from "./pages/Profile.tsx";
+import CompleteProfile from "./pages/CompleteProfile.tsx";
+import ProfileCompletionGate from "./components/auth/ProfileCompletionGate.tsx";
 import AdminLayout from "./components/admin/AdminLayout.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminPosts from "./pages/admin/AdminPosts.tsx";
@@ -27,6 +29,7 @@ import CourseLearn from "./pages/CourseLearn.tsx";
 import AdminCourses from "./pages/admin/AdminCourses.tsx";
 import CourseEditor from "./pages/admin/CourseEditor.tsx";
 import AdminEnrollments from "./pages/admin/AdminEnrollments.tsx";
+import AdminUsers from "./pages/admin/AdminUsers.tsx";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +40,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ProfileCompletionGate />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/blog" element={<BlogIndex />} />
@@ -47,6 +51,7 @@ const App = () => (
             <Route path="/courses/:slug" element={<CourseDetail />} />
             <Route path="/courses/:slug/learn" element={<CourseLearn />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
@@ -60,6 +65,7 @@ const App = () => (
               <Route path="courses" element={<AdminCourses />} />
               <Route path="courses/:id" element={<CourseEditor />} />
               <Route path="enrollments" element={<AdminEnrollments />} />
+              <Route path="users" element={<AdminUsers />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
