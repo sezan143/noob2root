@@ -12,7 +12,7 @@ const SOCIAL_KEYS = [
 
 const Footer = () => {
   const [socials, setSocials] = useState<Record<string, string>>({});
-  const [siteName, setSiteName] = useState("FrogTech");
+  const [siteName, setSiteName] = useState("Noob to Root");
 
   useEffect(() => {
     const fetch = async () => {

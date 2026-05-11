@@ -32,12 +32,15 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
+        <Link to="/" className="flex items-center gap-1 group">
           <span className="text-2xl font-heading font-bold neon-text">
-            Frog
+            Noob
+          </span>
+          <span className="text-2xl font-heading font-bold text-muted-foreground">
+            2
           </span>
           <span className="text-2xl font-heading font-bold text-foreground">
-            Tech
+            Root
           </span>
         </Link>
 

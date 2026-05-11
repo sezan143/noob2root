@@ -17,4 +17,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /admin/*
 
-Sitemap: https://frogtech.blog/sitemap.xml
+Sitemap: https://noobtoroot.com/sitemap.xml
