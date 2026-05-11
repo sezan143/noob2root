@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import type { DbCategory } from "@/types/database";
 
@@ -43,9 +44,13 @@ const Categories = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Categories"
+        description="Browse Noob to Root tutorials by category — Linux, hacking, networking, DevOps, and more."
+      />
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-3">Categories</h1>
-        <p className="text-muted-foreground mb-10 max-w-lg">Explore our content by topic area.</p>
+        <p className="text-muted-foreground mb-10 max-w-lg">Explore tutorials by topic — from Linux fundamentals to advanced exploitation.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat) => (
             <motion.div
