@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, Eye, Calendar, Share2, Twitter, Linkedin, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import SEO from "@/components/SEO";
 import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
 import PostCard from "@/components/blog/PostCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,9 +67,44 @@ const BlogPost = () => {
     ? [...(post.content.matchAll(/<h2[^>]*>(.*?)<\/h2>/gi))].map((m) => m[1].replace(/<[^>]*>/g, ""))
     : [];
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const plainExcerpt =
+    post.excerpt?.trim() ||
+    (post.content ? post.content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 155) : "");
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: plainExcerpt,
+    image: post.featured_image ? [post.featured_image] : undefined,
+    datePublished: post.published_at || post.created_at,
+    dateModified: (post as any).updated_at || post.published_at || post.created_at,
+    author: post.authors
+      ? { "@type": "Person", name: post.authors.name }
+      : { "@type": "Organization", name: "Noob to Root" },
+    publisher: {
+      "@type": "Organization",
+      name: "Noob to Root",
+      logo: { "@type": "ImageObject", url: `${origin}/og-default.jpg` },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": shareUrl },
+    keywords: (post.tags ?? []).join(", "),
+    articleSection: post.categories?.name,
+  };
 
   return (
     <Layout>
+      <SEO
+        title={post.title}
+        description={plainExcerpt}
+        image={post.featured_image ?? undefined}
+        type="article"
+        publishedAt={post.published_at || post.created_at}
+        updatedAt={(post as any).updated_at}
+        author={post.authors?.name}
+        tags={post.tags ?? []}
+        jsonLd={articleJsonLd}
+      />
       <ReadingProgressBar />
       <article className="container mx-auto px-4 py-12">
         {/* Breadcrumb */}
