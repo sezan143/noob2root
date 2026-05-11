@@ -54,6 +54,11 @@ export default {
         "neon-cyan": "hsl(var(--neon-cyan))",
         "neon-magenta": "hsl(var(--neon-magenta))",
         "neon-blue": "hsl(var(--neon-blue))",
+        "neon-green": "hsl(var(--neon-green))",
+        learn: {
+          DEFAULT: "hsl(var(--learn))",
+          foreground: "hsl(var(--learn-foreground))",
+        },
         "glass-border": "hsl(var(--glass-border))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

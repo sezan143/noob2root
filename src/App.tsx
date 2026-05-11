@@ -19,6 +19,12 @@ import AdminCategories from "./pages/admin/AdminCategories.tsx";
 import AdminAuthors from "./pages/admin/AdminAuthors.tsx";
 import AdminSettings from "./pages/admin/AdminSettings.tsx";
 import AdminSubscribers from "./pages/admin/AdminSubscribers.tsx";
+import Courses from "./pages/Courses.tsx";
+import CourseDetail from "./pages/CourseDetail.tsx";
+import CourseLearn from "./pages/CourseLearn.tsx";
+import AdminCourses from "./pages/admin/AdminCourses.tsx";
+import CourseEditor from "./pages/admin/CourseEditor.tsx";
+import AdminEnrollments from "./pages/admin/AdminEnrollments.tsx";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +41,9 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/about" element={<About />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/courses/:slug" element={<CourseDetail />} />
+            <Route path="/courses/:slug/learn" element={<CourseLearn />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
@@ -44,6 +53,9 @@ const App = () => (
               <Route path="authors" element={<AdminAuthors />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="subscribers" element={<AdminSubscribers />} />
+              <Route path="courses" element={<AdminCourses />} />
+              <Route path="courses/:id" element={<CourseEditor />} />
+              <Route path="enrollments" element={<AdminEnrollments />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
