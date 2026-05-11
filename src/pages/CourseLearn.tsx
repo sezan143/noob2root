@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2, Lock, ChevronLeft, ChevronRight, Loader2, Terminal as TerminalIcon,
-  Award, Sparkles, Download, Play, X, BookOpen, ListChecks,
+  Award, Sparkles, Download, Play, X, BookOpen, ListChecks, Copy, RotateCcw, Check, Zap,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SEO from "@/components/SEO";
@@ -17,6 +17,15 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 type Bundle = { course: Course; modules: Module[]; lessons: Lesson[] };
+
+const ENCOURAGEMENTS = [
+  "Nice work! 🚀 You're leveling up.",
+  "Crushing it! Keep going.",
+  "Boom! Another one in the bag.",
+  "You're on fire 🔥 Onward!",
+  "Sweet — that's how you root.",
+  "Look at you go! 🌱",
+];
 
 export default function CourseLearn() {
   const { slug } = useParams<{ slug: string }>();
@@ -141,11 +150,11 @@ export default function CourseLearn() {
       setShowCert(true);
       toast.success("🎉 Course complete!");
     } else {
-      toast.success("Lesson complete");
+      toast.success(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
       // auto-advance
       const idx = orderedLessons.findIndex((l) => l.id === lessonId);
       const nextLesson = orderedLessons[idx + 1];
-      if (nextLesson) setActiveId(nextLesson.id);
+      if (nextLesson) setTimeout(() => setActiveId(nextLesson.id), 650);
     }
   };
 
@@ -241,7 +250,7 @@ export default function CourseLearn() {
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="container max-w-4xl mx-auto px-4 py-10">
+          <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-10 md:py-14">
             {allDone && (
               <CertificateBanner
                 course={data.course}
@@ -300,94 +309,220 @@ function LessonView({
   hasPrev: boolean;
   hasNext: boolean;
 }) {
+  const [bursting, setBursting] = useState(false);
+
+  const handleComplete = () => {
+    if (done) return;
+    setBursting(true);
+    setTimeout(() => setBursting(false), 1000);
+    onComplete();
+  };
+
   return (
-    <motion.article initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div>
-        <span className="text-xs uppercase tracking-wider text-learn font-semibold">{lesson.lesson_type}</span>
-        <h1 className="text-3xl md:text-4xl font-heading font-bold mt-1">{lesson.title}</h1>
-      </div>
+    <motion.article
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="space-y-8"
+    >
+      <header className="space-y-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-learn/10 border border-learn/25 text-[11px] font-semibold uppercase tracking-[0.14em] text-learn">
+          {lesson.lesson_type === "quiz" && <ListChecks className="w-3.5 h-3.5" />}
+          {lesson.lesson_type === "terminal" && <TerminalIcon className="w-3.5 h-3.5" />}
+          {lesson.lesson_type === "video" && <Play className="w-3.5 h-3.5" />}
+          {lesson.lesson_type === "text" && <BookOpen className="w-3.5 h-3.5" />}
+          {lesson.lesson_type}
+          {lesson.duration_minutes ? <span className="opacity-70">· {lesson.duration_minutes} min</span> : null}
+        </div>
+        <h1 className="text-3xl md:text-[2.5rem] leading-tight font-heading font-bold tracking-tight">
+          {lesson.title}
+        </h1>
+      </header>
 
       {lesson.lesson_type === "video" && lesson.video_url && (
-        <div className="aspect-video rounded-lg overflow-hidden bg-black">
+        <div className="aspect-video rounded-2xl overflow-hidden bg-black border border-border shadow-[0_20px_60px_-20px_hsl(var(--learn)/0.4)]">
           <iframe src={lesson.video_url} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
         </div>
       )}
 
       {lesson.content && (
-        <div
-          className="prose prose-invert prose-headings:font-heading prose-a:text-learn prose-strong:text-foreground max-w-none"
-          dangerouslySetInnerHTML={{ __html: contentToHtml(lesson.content) }}
-        />
+        <div className="learn-prose" dangerouslySetInnerHTML={{ __html: contentToHtml(lesson.content) }} />
       )}
 
       {lesson.lesson_type === "terminal" && lesson.terminal_commands?.length > 0 && (
         <TerminalSimulator commands={lesson.terminal_commands} />
       )}
 
+      {lesson.lesson_type !== "terminal" && lesson.terminal_commands?.length > 0 && (
+        <TerminalSimulator commands={lesson.terminal_commands} title="Try it yourself" />
+      )}
+
       {lesson.lesson_type === "quiz" && questions.length > 0 && (
         <QuizPlayer questions={questions} onPass={onComplete} alreadyPassed={done} />
       )}
 
-      <div className="flex items-center justify-between pt-6 border-t border-border">
-        <Button variant="outline" disabled={!hasPrev} onClick={onPrev}>
+      <div className="pt-8 mt-4 border-t border-border/60 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
+        <Button
+          variant="outline"
+          size="lg"
+          disabled={!hasPrev}
+          onClick={onPrev}
+          className="rounded-xl"
+        >
           <ChevronLeft className="w-4 h-4 mr-1" /> Previous
         </Button>
+
         {lesson.lesson_type !== "quiz" && (
-          <Button onClick={onComplete} disabled={done} className="bg-learn hover:bg-learn/90 text-learn-foreground font-semibold">
-            {done ? <><CheckCircle2 className="w-4 h-4 mr-2" /> Completed</> : "Mark complete"}
-          </Button>
+          <div className="relative flex justify-center">
+            <AnimatePresence>
+              {bursting && (
+                <>
+                  {Array.from({ length: 14 }).map((_, i) => {
+                    const angle = (i / 14) * Math.PI * 2;
+                    const dist = 60 + Math.random() * 40;
+                    const colors = ["hsl(var(--learn))", "hsl(var(--neon-cyan))", "hsl(var(--neon-magenta))", "hsl(var(--neon-blue))"];
+                    return (
+                      <span
+                        key={i}
+                        className="confetti-dot"
+                        style={{
+                          left: "50%", top: "50%",
+                          background: colors[i % colors.length],
+                          ["--tx" as string]: `${Math.cos(angle) * dist}px`,
+                          ["--ty" as string]: `${Math.sin(angle) * dist}px`,
+                        }}
+                      />
+                    );
+                  })}
+                </>
+              )}
+            </AnimatePresence>
+            <motion.div whileTap={{ scale: 0.96 }} whileHover={{ scale: 1.02 }}>
+              <Button
+                size="lg"
+                onClick={handleComplete}
+                disabled={done}
+                className={cn(
+                  "rounded-xl px-7 h-12 text-base font-semibold shadow-lg shadow-learn/20",
+                  "bg-gradient-to-r from-learn to-emerald-400 text-learn-foreground hover:opacity-95",
+                  !done && "btn-pulse",
+                  done && "from-learn/40 to-emerald-400/40"
+                )}
+              >
+                {done ? (
+                  <><CheckCircle2 className="w-5 h-5 mr-2" /> Completed</>
+                ) : (
+                  <><Zap className="w-5 h-5 mr-2" /> Mark as completed</>
+                )}
+              </Button>
+            </motion.div>
+          </div>
         )}
-        <Button variant="outline" disabled={!hasNext} onClick={onNext}>
-          Next <ChevronRight className="w-4 h-4 ml-1" />
+
+        <Button
+          variant={hasNext ? "default" : "outline"}
+          size="lg"
+          disabled={!hasNext}
+          onClick={onNext}
+          className={cn(
+            "rounded-xl",
+            hasNext && "bg-foreground text-background hover:bg-foreground/90"
+          )}
+        >
+          Next lesson <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
     </motion.article>
   );
 }
 
-// Convert markdown-ish content to safe HTML (very basic).
+// Convert markdown-ish content to HTML with light syntax highlighting.
 function contentToHtml(md: string): string {
-  // If looks like HTML already, just return
   if (md.trim().startsWith("<")) return md;
   const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]!));
   const lines = md.split("\n");
   let html = "";
   let inCode = false;
+  let codeLang = "";
+  let codeBuf: string[] = [];
   let inList = false;
+  const flushCode = () => {
+    const highlighted = highlightCode(codeBuf.join("\n"), codeLang);
+    html += `<pre data-lang="${esc(codeLang || "code")}"><code>${highlighted}</code></pre>`;
+    codeBuf = []; codeLang = "";
+  };
   for (const line of lines) {
-    if (line.startsWith("```")) {
-      if (inCode) { html += "</code></pre>"; inCode = false; }
-      else { html += '<pre class="bg-muted/60 rounded-md p-4 text-sm overflow-x-auto"><code>'; inCode = true; }
+    const fence = line.match(/^```(\w+)?\s*$/);
+    if (fence) {
+      if (inCode) { flushCode(); inCode = false; }
+      else { inCode = true; codeLang = fence[1] || ""; }
       continue;
     }
-    if (inCode) { html += esc(line) + "\n"; continue; }
-    if (/^### /.test(line)) { html += `<h3>${esc(line.slice(4))}</h3>`; continue; }
-    if (/^## /.test(line)) { html += `<h2>${esc(line.slice(3))}</h2>`; continue; }
-    if (/^# /.test(line)) { html += `<h1>${esc(line.slice(2))}</h1>`; continue; }
+    if (inCode) { codeBuf.push(line); continue; }
+    if (/^### /.test(line)) { html += `<h3>${formatInline(esc(line.slice(4)))}</h3>`; continue; }
+    if (/^## /.test(line)) { html += `<h2>${formatInline(esc(line.slice(3))) }</h2>`; continue; }
+    if (/^# /.test(line)) { html += `<h1>${formatInline(esc(line.slice(2)))}</h1>`; continue; }
+    if (/^> /.test(line)) { html += `<blockquote>${formatInline(esc(line.slice(2)))}</blockquote>`; continue; }
     if (/^- /.test(line)) {
       if (!inList) { html += "<ul>"; inList = true; }
       html += `<li>${formatInline(esc(line.slice(2)))}</li>`;
       continue;
     } else if (inList) { html += "</ul>"; inList = false; }
-    if (line.trim() === "") { html += ""; continue; }
+    if (line.trim() === "") { continue; }
     html += `<p>${formatInline(esc(line))}</p>`;
   }
   if (inList) html += "</ul>";
-  if (inCode) html += "</code></pre>";
+  if (inCode) flushCode();
   return html;
 }
 
 function formatInline(s: string): string {
   return s
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-muted text-learn text-[0.9em]">$1</code>');
+    .replace(/\*(?!\s)(.+?)\*/g, "<em>$1</em>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
-function TerminalSimulator({ commands }: { commands: { command: string; output: string; hint?: string }[] }) {
+// Lightweight syntax highlighter for shell / bash / common code.
+function highlightCode(code: string, lang: string): string {
+  const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]!));
+  const isShell = /^(bash|sh|shell|zsh|console|terminal)$/i.test(lang) || /^\s*\$\s/m.test(code);
+  const lines = code.split("\n").map((raw) => {
+    let line = esc(raw);
+    // Comments
+    line = line.replace(/(^|\s)(#.*)$/g, '$1<span class="tk-cmt">$2</span>');
+    // Shell prompts
+    if (isShell) {
+      line = line.replace(/^(\s*)(\$|#&gt;|root@[^\s$]*[$#])\s/, '$1<span class="tk-prompt">$2</span> ');
+    }
+    // Strings
+    line = line.replace(/(&quot;[^&]*?&quot;|&#39;[^&]*?&#39;|"[^"]*"|'[^']*')/g, '<span class="tk-str">$1</span>');
+    // Numbers
+    line = line.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="tk-num">$1</span>');
+    // Keywords
+    const kws = isShell
+      ? ["sudo","cd","ls","mkdir","rm","cp","mv","cat","echo","grep","chmod","chown","apt","apt-get","pacman","yum","ssh","curl","wget","nano","vim","exit","export","source","alias","find","ps","kill","tar","unzip","systemctl","service","docker","git"]
+      : ["const","let","var","function","return","if","else","for","while","class","import","export","from","await","async","new","try","catch","throw","def","print","True","False","None","null","true","false"];
+    const re = new RegExp(`\\b(${kws.join("|")})\\b`, "g");
+    line = line.replace(re, '<span class="tk-kw">$1</span>');
+    return line;
+  });
+  return lines.join("\n");
+}
+
+function TerminalSimulator({
+  commands, title,
+}: {
+  commands: { command: string; output: string; hint?: string }[];
+  title?: string;
+}) {
   const [step, setStep] = useState(0);
   const [history, setHistory] = useState<{ input: string; output: string; correct: boolean }[]>([]);
   const [input, setInput] = useState("");
+  const [showHint, setShowHint] = useState(false);
   const current = commands[step];
+  const allDone = !current;
+  const totalSteps = commands.length;
 
   const submit = () => {
     if (!current) return;
@@ -396,49 +531,112 @@ function TerminalSimulator({ commands }: { commands: { command: string; output: 
       ...h,
       { input, output: ok ? current.output : `bash: command not recognized. Try: ${current.command}`, correct: ok },
     ]);
-    if (ok) {
-      setStep((s) => s + 1);
-    }
+    if (ok) { setStep((s) => s + 1); setShowHint(false); }
     setInput("");
   };
 
+  const reset = () => { setStep(0); setHistory([]); setInput(""); setShowHint(false); };
+
+  const copyCmd = (cmd: string) => {
+    navigator.clipboard?.writeText(cmd);
+    toast.success("Copied to clipboard");
+  };
+
   return (
-    <div className="rounded-xl bg-black/80 border border-learn/30 overflow-hidden">
-      <div className="flex items-center gap-1.5 px-4 py-2 border-b border-learn/20 bg-black/60">
-        <span className="w-3 h-3 rounded-full bg-red-500/80" />
-        <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-        <span className="w-3 h-3 rounded-full bg-learn" />
-        <span className="ml-3 text-xs text-muted-foreground font-mono">student@noob2root:~$ practice</span>
-      </div>
-      <div className="p-4 font-mono text-sm space-y-2 min-h-[180px]">
-        {history.map((h, i) => (
-          <div key={i}>
-            <div className="text-learn">$ <span className="text-foreground">{h.input}</span></div>
-            <div className={cn("whitespace-pre-wrap", h.correct ? "text-muted-foreground" : "text-red-400")}>{h.output}</div>
+    <div className="my-2">
+      {title && (
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-learn/15 border border-learn/30 flex items-center justify-center">
+            <TerminalIcon className="w-4 h-4 text-learn" />
           </div>
-        ))}
-        {current ? (
-          <>
-            {current.hint && history.length === step && (
-              <div className="text-xs text-muted-foreground italic">💡 {current.hint}</div>
+          <div>
+            <div className="font-heading font-semibold text-sm">{title}</div>
+            <div className="text-xs text-muted-foreground">Practice in a safe sandbox — no real shell.</div>
+          </div>
+        </div>
+      )}
+      <div className="rounded-2xl overflow-hidden border border-learn/25 shadow-[0_20px_60px_-30px_hsl(var(--learn)/0.6)] bg-[hsl(220_25%_4%)]">
+        {/* Title bar */}
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-learn/15 bg-black/40">
+          <span className="w-3 h-3 rounded-full bg-red-500/80" />
+          <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
+          <span className="w-3 h-3 rounded-full bg-learn" />
+          <span className="ml-3 text-xs text-muted-foreground font-mono">student@noob2root:~$ practice</span>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wider text-learn/80 font-mono">
+              {Math.min(step, totalSteps)}/{totalSteps}
+            </span>
+            <button onClick={reset} className="text-muted-foreground hover:text-learn transition-colors p-1" title="Reset">
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Hint card showing the next expected command */}
+        {current && (
+          <div className="px-4 py-2 bg-learn/5 border-b border-learn/10 flex items-center gap-2 text-xs">
+            <span className="text-learn/80 font-mono">Next:</span>
+            <code className="font-mono text-learn">{showHint ? current.command : "•••"}</code>
+            <button
+              onClick={() => setShowHint((v) => !v)}
+              className="ml-1 text-[11px] text-muted-foreground hover:text-learn underline-offset-2 hover:underline"
+            >
+              {showHint ? "hide" : "reveal"}
+            </button>
+            {showHint && (
+              <button
+                onClick={() => copyCmd(current.command)}
+                className="text-muted-foreground hover:text-learn"
+                title="Copy"
+              >
+                <Copy className="w-3 h-3" />
+              </button>
             )}
-            <div className="flex items-center gap-2">
-              <span className="text-learn">$</span>
+            {current.hint && (
+              <span className="ml-auto text-muted-foreground italic truncate">💡 {current.hint}</span>
+            )}
+          </div>
+        )}
+
+        {/* Body */}
+        <div className="p-5 font-mono text-[13.5px] leading-relaxed space-y-2 min-h-[200px] max-h-[420px] overflow-y-auto">
+          {history.map((h, i) => (
+            <div key={i} className="space-y-0.5">
+              <div>
+                <span className="text-learn font-semibold">$</span>{" "}
+                <span className="text-foreground">{h.input}</span>
+              </div>
+              <div className={cn(
+                "whitespace-pre-wrap pl-3 border-l-2",
+                h.correct ? "text-muted-foreground border-learn/40" : "text-red-400 border-red-500/40"
+              )}>
+                {h.output}
+              </div>
+            </div>
+          ))}
+          {current ? (
+            <div className="flex items-center gap-2 pt-1">
+              <span className="text-learn font-semibold">$</span>
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && submit()}
-                className="flex-1 bg-transparent outline-none text-foreground"
-                placeholder="type the command…"
-                autoFocus
+                className="flex-1 bg-transparent outline-none text-foreground caret-learn placeholder:text-muted-foreground/50"
+                placeholder="type the command and press Enter…"
+                spellCheck={false}
+                autoComplete="off"
               />
             </div>
-          </>
-        ) : (
-          <div className="text-learn flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" /> All commands completed!
-          </div>
-        )}
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 text-learn pt-2"
+            >
+              <Check className="w-4 h-4" /> All commands completed — nice work!
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );
