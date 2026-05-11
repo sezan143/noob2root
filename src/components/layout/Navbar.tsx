@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ProfileMenu from "./ProfileMenu";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -70,6 +71,7 @@ const Navbar = () => {
           >
             <Search className="w-5 h-5" />
           </Link>
+          <ProfileMenu />
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground"
