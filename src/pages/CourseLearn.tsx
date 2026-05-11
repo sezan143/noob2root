@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2, Lock, ChevronLeft, ChevronRight, Loader2, Terminal as TerminalIcon,
-  Award, Sparkles, Download, Play, X, BookOpen, ListChecks,
+  Award, Sparkles, Download, Play, X, BookOpen, ListChecks, Copy, RotateCcw, Check, Zap,
 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import SEO from "@/components/SEO";
@@ -17,6 +17,15 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 type Bundle = { course: Course; modules: Module[]; lessons: Lesson[] };
+
+const ENCOURAGEMENTS = [
+  "Nice work! 🚀 You're leveling up.",
+  "Crushing it! Keep going.",
+  "Boom! Another one in the bag.",
+  "You're on fire 🔥 Onward!",
+  "Sweet — that's how you root.",
+  "Look at you go! 🌱",
+];
 
 export default function CourseLearn() {
   const { slug } = useParams<{ slug: string }>();
@@ -141,11 +150,11 @@ export default function CourseLearn() {
       setShowCert(true);
       toast.success("🎉 Course complete!");
     } else {
-      toast.success("Lesson complete");
+      toast.success(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
       // auto-advance
       const idx = orderedLessons.findIndex((l) => l.id === lessonId);
       const nextLesson = orderedLessons[idx + 1];
-      if (nextLesson) setActiveId(nextLesson.id);
+      if (nextLesson) setTimeout(() => setActiveId(nextLesson.id), 650);
     }
   };
 
@@ -241,7 +250,7 @@ export default function CourseLearn() {
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="container max-w-4xl mx-auto px-4 py-10">
+          <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-10 md:py-14">
             {allDone && (
               <CertificateBanner
                 course={data.course}
