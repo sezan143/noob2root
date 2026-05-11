@@ -76,8 +76,13 @@ const BlogIndex = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Tutorials & Guides"
+        description="Browse all Noob to Root tutorials — Linux, ethical hacking, networking, DevOps, and developer guides."
+      />
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-8">Blog</h1>
+        <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">Tutorials</h1>
+        <p className="text-muted-foreground mb-8">Hands-on guides from noob to root.</p>
 
         {/* Search & Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
