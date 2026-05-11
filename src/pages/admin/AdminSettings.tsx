@@ -21,9 +21,9 @@ const SOCIAL_FIELDS = [
 ];
 
 const SITE_FIELDS = [
-  { key: "site_name", label: "Site Name", placeholder: "FrogTech" },
-  { key: "site_tagline", label: "Tagline", placeholder: "The Future of Technology, Today" },
-  { key: "contact_email", label: "Contact Email", placeholder: "hello@frogtech.com" },
+  { key: "site_name", label: "Site Name", placeholder: "Noob to Root" },
+  { key: "site_tagline", label: "Tagline", placeholder: "From Noob to Root — Tech Tutorials & Hacking Guides" },
+  { key: "contact_email", label: "Contact Email", placeholder: "hello@noobtoroot.com" },
 ];
 
 export default function AdminSettings() {

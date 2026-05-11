@@ -40,7 +40,7 @@ export default function AdminLogin() {
       <Card className="w-full max-w-md glass-card border-border/50">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold font-display text-primary">
-            FrogTech Admin
+            Noob to Root Admin
           </CardTitle>
           <CardDescription>{isSignUp ? "Create an account" : "Sign in to manage your blog"}</CardDescription>
         </CardHeader>
@@ -48,7 +48,7 @@ export default function AdminLogin() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="admin@frogtech.com" />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="admin@noobtoroot.com" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
