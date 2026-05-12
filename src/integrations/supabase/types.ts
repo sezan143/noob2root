@@ -470,6 +470,9 @@ export type Database = {
           last_name: string | null
           mobile_number: string | null
           profile_completed: boolean
+          referral_code: string | null
+          referral_credit_cents: number
+          referred_by: string | null
           updated_at: string
           user_id: string
           username: string | null
@@ -485,6 +488,9 @@ export type Database = {
           last_name?: string | null
           mobile_number?: string | null
           profile_completed?: boolean
+          referral_code?: string | null
+          referral_credit_cents?: number
+          referred_by?: string | null
           updated_at?: string
           user_id: string
           username?: string | null
@@ -500,6 +506,9 @@ export type Database = {
           last_name?: string | null
           mobile_number?: string | null
           profile_completed?: boolean
+          referral_code?: string | null
+          referral_credit_cents?: number
+          referred_by?: string | null
           updated_at?: string
           user_id?: string
           username?: string | null
@@ -543,6 +552,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referral_rewards: {
+        Row: {
+          amount_cents: number
+          approved_at: string | null
+          course_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          referred_user_id: string
+          referrer_id: string
+          reward_type: string
+          status: string
+        }
+        Insert: {
+          amount_cents?: number
+          approved_at?: string | null
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          referred_user_id: string
+          referrer_id: string
+          reward_type?: string
+          status?: string
+        }
+        Update: {
+          amount_cents?: number
+          approved_at?: string | null
+          course_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          referred_user_id?: string
+          referrer_id?: string
+          reward_type?: string
+          status?: string
+        }
+        Relationships: []
       }
       site_settings: {
         Row: {
@@ -591,6 +639,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_referral_code: { Args: never; Returns: string }
+      get_referrer_by_code: { Args: { _code: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
