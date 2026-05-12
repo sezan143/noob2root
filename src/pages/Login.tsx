@@ -124,6 +124,15 @@ export default function Login() {
                 <TabsTrigger value="signin">Sign in</TabsTrigger>
                 <TabsTrigger value="signup">Create account</TabsTrigger>
               </TabsList>
+              {refCode && mode === "signup" && (
+                <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 p-3 text-xs text-primary flex items-center gap-2">
+                  <span className="text-base">🎁</span>
+                  <span>
+                    You were invited! Code{" "}
+                    <span className="font-mono font-semibold">{refCode}</span> will be applied after you complete your profile.
+                  </span>
+                </div>
+              )}
               <TabsContent value={mode}>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
