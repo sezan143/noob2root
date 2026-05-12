@@ -97,6 +97,14 @@ export default {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        "cta-shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "cta-glow": {
+          "0%, 100%": { boxShadow: "0 0 0 0 hsl(var(--learn) / 0.55), 0 0 18px 0 hsl(var(--learn) / 0.35)" },
+          "50%": { boxShadow: "0 0 0 8px hsl(var(--learn) / 0), 0 0 32px 4px hsl(var(--learn) / 0.55)" },
+        },
         "required-pulse": {
           "0%, 100%": {
             transform: "scale(1)",
@@ -117,6 +125,8 @@ export default {
         "glow-pulse": "glow-pulse 2s ease-in-out infinite",
         float: "float 3s ease-in-out infinite",
         "required-pulse": "required-pulse 1.8s ease-in-out infinite",
+        "cta-shimmer": "cta-shimmer 2.4s linear infinite",
+        "cta-glow": "cta-glow 2.4s ease-in-out infinite",
       },
     },
   },
