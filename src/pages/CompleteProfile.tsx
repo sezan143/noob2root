@@ -196,7 +196,7 @@ export default function CompleteProfile() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="fn">
-                    First name <span className="text-destructive">*</span>
+                    First name <span className="text-destructive inline-block animate-required-pulse origin-center ml-0.5">*</span>
                   </Label>
                   <Input
                     id="fn"
@@ -209,7 +209,7 @@ export default function CompleteProfile() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="ln">
-                    Last name <span className="text-destructive">*</span>
+                    Last name <span className="text-destructive inline-block animate-required-pulse origin-center ml-0.5">*</span>
                   </Label>
                   <Input
                     id="ln"
@@ -237,7 +237,7 @@ export default function CompleteProfile() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="mob">
-                    Mobile number <span className="text-destructive">*</span>
+                    Mobile number <span className="text-destructive inline-block animate-required-pulse origin-center ml-0.5">*</span>
                   </Label>
                   <Input
                     id="mob"
