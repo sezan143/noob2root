@@ -13,6 +13,7 @@ import SEO from "@/components/SEO";
 export default function Login() {
   const [params] = useSearchParams();
   const redirect = params.get("redirect") || "/";
+  const initialMode = params.get("mode") === "signup" ? "signup" : "signin";
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
@@ -20,8 +21,19 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
+  const [refCode, setRefCode] = useState<string | null>(null);
+
+  // Detect referral code from localStorage (set by /ref/:code)
+  if (typeof window !== "undefined" && refCode === null) {
+    try {
+      const code = localStorage.getItem("ntr_ref_code");
+      if (code) setRefCode(code);
+    } catch {
+      /* ignore */
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,6 +124,15 @@ export default function Login() {
                 <TabsTrigger value="signin">Sign in</TabsTrigger>
                 <TabsTrigger value="signup">Create account</TabsTrigger>
               </TabsList>
+              {refCode && mode === "signup" && (
+                <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 p-3 text-xs text-primary flex items-center gap-2">
+                  <span className="text-base">🎁</span>
+                  <span>
+                    You were invited! Code{" "}
+                    <span className="font-mono font-semibold">{refCode}</span> will be applied after you complete your profile.
+                  </span>
+                </div>
+              )}
               <TabsContent value={mode}>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">

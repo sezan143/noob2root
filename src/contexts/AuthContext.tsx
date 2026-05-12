@@ -12,6 +12,9 @@ export interface Profile {
   mobile_number: string | null;
   date_of_birth: string | null;
   profile_completed: boolean;
+  referral_code: string | null;
+  referral_credit_cents: number;
+  referred_by: string | null;
 }
 
 interface AuthContextType {
@@ -31,7 +34,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const useAuth = () => useContext(AuthContext);
 
 const PROFILE_FIELDS =
-  "display_name, avatar_url, first_name, last_name, username, bio, mobile_number, date_of_birth, profile_completed";
+  "display_name, avatar_url, first_name, last_name, username, bio, mobile_number, date_of_birth, profile_completed, referral_code, referral_credit_cents, referred_by";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -57,6 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         mobile_number: null,
         date_of_birth: null,
         profile_completed: false,
+        referral_code: null,
+        referral_credit_cents: 0,
+        referred_by: null,
       }
     );
   };

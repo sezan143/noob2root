@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText, FolderOpen, Users, LogOut, Settings, Mail, GraduationCap, ClipboardList, UserCircle } from "lucide-react";
+import { LayoutDashboard, FileText, FolderOpen, Users, LogOut, Settings, Mail, GraduationCap, ClipboardList, UserCircle, Gift } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,6 +13,7 @@ const items = [
   { title: "Courses", url: "/admin/courses", icon: GraduationCap },
   { title: "Enrollments", url: "/admin/enrollments", icon: ClipboardList },
   { title: "Users", url: "/admin/users", icon: UserCircle },
+  { title: "Referrals", url: "/admin/referrals", icon: Gift },
   { title: "Categories", url: "/admin/categories", icon: FolderOpen },
   { title: "Authors", url: "/admin/authors", icon: Users },
   { title: "Subscribers", url: "/admin/subscribers", icon: Mail },

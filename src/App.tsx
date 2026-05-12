@@ -30,6 +30,9 @@ import AdminCourses from "./pages/admin/AdminCourses.tsx";
 import CourseEditor from "./pages/admin/CourseEditor.tsx";
 import AdminEnrollments from "./pages/admin/AdminEnrollments.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
+import Referrals from "./pages/Referrals.tsx";
+import RefRedirect from "./pages/RefRedirect.tsx";
+import AdminReferrals from "./pages/admin/AdminReferrals.tsx";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +56,8 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/complete-profile" element={<CompleteProfile />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/referrals" element={<Referrals />} />
+            <Route path="/ref/:code" element={<RefRedirect />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
@@ -66,6 +71,7 @@ const App = () => (
               <Route path="courses/:id" element={<CourseEditor />} />
               <Route path="enrollments" element={<AdminEnrollments />} />
               <Route path="users" element={<AdminUsers />} />
+              <Route path="referrals" element={<AdminReferrals />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

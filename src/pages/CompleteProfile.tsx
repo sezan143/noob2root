@@ -106,6 +106,21 @@ export default function CompleteProfile() {
     }
     setSaving(true);
     const display = `${fn} ${ln}`.trim();
+
+    // Apply referral code if present (one-time, only if user has no referrer yet)
+    let refUserId: string | null = null;
+    if (!profile?.referred_by) {
+      try {
+        const code = localStorage.getItem("ntr_ref_code");
+        if (code) {
+          const { data } = await supabase.rpc("get_referrer_by_code", { _code: code });
+          if (data && data !== user.id) refUserId = data as string;
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+
     const { error } = await supabase
       .from("profiles")
       .upsert(
@@ -120,6 +135,7 @@ export default function CompleteProfile() {
           display_name: display,
           avatar_url: avatarUrl,
           profile_completed: true,
+          ...(refUserId ? { referred_by: refUserId } : {}),
         },
         { onConflict: "user_id" }
       );
@@ -133,6 +149,11 @@ export default function CompleteProfile() {
       return;
     }
     await refreshProfile();
+    try {
+      localStorage.removeItem("ntr_ref_code");
+    } catch {
+      /* ignore */
+    }
     toast.success("Welcome aboard! 🎉");
     navigate(redirect, { replace: true });
   };

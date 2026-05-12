@@ -16,6 +16,7 @@ import {
   LogOut,
   GraduationCap,
   Award,
+  Gift,
   ShieldCheck,
   LogIn,
   Loader2,
@@ -108,6 +109,11 @@ export default function ProfileMenu() {
         <DropdownMenuItem asChild>
           <Link to="/profile?tab=certificates" className="cursor-pointer">
             <Award className="w-4 h-4 mr-2" /> Certificates
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/referrals" className="cursor-pointer">
+            <Gift className="w-4 h-4 mr-2" /> Refer & earn
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
