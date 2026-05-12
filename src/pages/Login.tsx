@@ -13,6 +13,7 @@ import SEO from "@/components/SEO";
 export default function Login() {
   const [params] = useSearchParams();
   const redirect = params.get("redirect") || "/";
+  const initialMode = params.get("mode") === "signup" ? "signup" : "signin";
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
@@ -20,8 +21,19 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [signedUpEmail, setSignedUpEmail] = useState<string | null>(null);
+  const [refCode, setRefCode] = useState<string | null>(null);
+
+  // Detect referral code from localStorage (set by /ref/:code)
+  if (typeof window !== "undefined" && refCode === null) {
+    try {
+      const code = localStorage.getItem("ntr_ref_code");
+      if (code) setRefCode(code);
+    } catch {
+      /* ignore */
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
