@@ -48,7 +48,13 @@ type Cert = {
   recipient_name: string | null;
   issued_at: string;
   paid: boolean;
-  course: { title: string; instructor_name: string | null } | null;
+  course: {
+    title: string;
+    instructor_name: string | null;
+    cover_image: string | null;
+    level: string | null;
+    duration_minutes: number | null;
+  } | null;
 };
 
 export default function Profile() {
