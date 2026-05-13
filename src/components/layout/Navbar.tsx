@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Search, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProfileMenu from "./ProfileMenu";
+import logo from "@/assets/logo.svg";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -34,16 +35,12 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-1 group">
-          <span className="text-2xl font-heading font-bold neon-text">
-            Noob
-          </span>
-          <span className="text-2xl font-heading font-bold text-muted-foreground">
-            2
-          </span>
-          <span className="text-2xl font-heading font-bold text-foreground">
-            Root
-          </span>
+        <Link to="/" className="flex items-center group" aria-label="Noob to Root home">
+          <img
+            src={logo}
+            alt="Noob to Root"
+            className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+          />
         </Link>
 
         {/* Desktop nav */}
