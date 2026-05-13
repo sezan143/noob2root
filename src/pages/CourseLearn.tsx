@@ -826,12 +826,18 @@ function CertificateClaimButton({
       };
       setCertificate(cert);
     }
-    generateCertificatePdf({
+    await generateCertificatePdf({
       recipient: cert.recipient,
       course: course.title,
       date: new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }),
       number: cert.number,
-      instructor: course.instructor_name ?? "Noob to Root Team",
+      category: course.level ?? undefined,
+      lengthHours: course.duration_minutes ? Math.max(1, Math.round(course.duration_minutes / 60)) : undefined,
+      heroImage: course.cover_image ?? undefined,
+      location: "Online",
+      signatures: course.instructor_name
+        ? [{ name: course.instructor_name, role: "Course Instructor" }]
+        : undefined,
     });
     toast.success("Certificate downloaded!");
   };
