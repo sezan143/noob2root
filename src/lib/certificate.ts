@@ -6,36 +6,41 @@ export type CertData = {
   course: string;
   date: string;
   number: string;
-  /** Optional course meta */
   category?: string;          // e.g. "PRO COURSE", "FOUNDATIONS"
-  lengthHours?: number;       // hours of content
+  lengthHours?: number;
   cpeCredits?: number;
-  location?: string;          // default "Online"
-  subjects?: string[];        // module / topic list
-  heroImage?: string;         // dataURL or remote URL of course cover
+  location?: string;
+  subjects?: string[];
+  heroImage?: string;
   signatures?: CertSignature[];
-  /** @deprecated kept for backward compat — maps to first signature name */
+  /** @deprecated kept for backward compat */
   instructor?: string;
 };
 
-/* ----- palette (RGB) ----- */
-const BG       = [10, 14, 24]    as const; // deep navy
-const BG_SOFT  = [16, 22, 34]    as const;
-const NEON     = [45, 220, 130]  as const; // electric green
-const NEON_DK  = [22, 140, 82]   as const;
-const CYAN     = [34, 211, 238]  as const;
-const MAGENTA  = [232, 121, 249] as const;
-const WHITE    = [240, 246, 252] as const;
-const MUTED    = [150, 168, 190] as const;
-const FAINT    = [60, 76, 96]    as const;
-const INK      = [12, 16, 22]    as const; // dark text on neon banner
+/* ============================================================
+ * Palette — mirrors src/index.css design tokens (RGB)
+ * bg #0A0A0A, neon-green 157/100/50, cyan 190/100/50, magenta 265/100/65
+ * ============================================================ */
+const BG       = [10, 10, 10]    as const; // --background
+const BG_CARD  = [18, 18, 18]    as const; // --card
+const BG_SOFT  = [26, 28, 30]    as const;
+const NEON     = [0, 255, 162]   as const; // --primary (neon green)
+const NEON_DK  = [0, 170, 110]   as const;
+const CYAN     = [0, 229, 255]   as const; // --secondary
+const MAGENTA  = [156, 92, 255]  as const; // --accent
+const WHITE    = [245, 248, 250] as const;
+const MUTED    = [140, 150, 160] as const;
+const HAIRLINE = [40, 44, 48]    as const;
+const INK      = [8, 10, 12]     as const;
 
 const setFill = (d: jsPDF, c: readonly [number, number, number]) => d.setFillColor(c[0], c[1], c[2]);
 const setDraw = (d: jsPDF, c: readonly [number, number, number]) => d.setDrawColor(c[0], c[1], c[2]);
 const setText = (d: jsPDF, c: readonly [number, number, number]) => d.setTextColor(c[0], c[1], c[2]);
 
-/* ------------------------------------------------------------------ */
-/* Utilities                                                           */
+type GStateCtor = { GState: new (o: { opacity: number }) => unknown };
+const opacity = (doc: jsPDF, a: number) =>
+  doc.setGState(new (doc as unknown as GStateCtor).GState({ opacity: a }));
+
 /* ------------------------------------------------------------------ */
 async function urlToDataUrl(url: string): Promise<string | null> {
   try {
@@ -52,151 +57,95 @@ async function urlToDataUrl(url: string): Promise<string | null> {
     return null;
   }
 }
-
-function detectImgFmt(dataUrl: string): "PNG" | "JPEG" {
-  return /^data:image\/jpe?g/i.test(dataUrl) ? "JPEG" : "PNG";
-}
+const detectImgFmt = (d: string): "PNG" | "JPEG" =>
+  /^data:image\/jpe?g/i.test(d) ? "JPEG" : "PNG";
 
 /* ------------------------------------------------------------------ */
-/* Brand mark — NTR hex tile + wordmark                                */
+/* Backplate — deep black with subtle dotted grid + corner glow        */
 /* ------------------------------------------------------------------ */
-function drawBrand(doc: jsPDF, x: number, y: number) {
-  const r = 14;
-  const cx = x + r;
-  const cy = y + r;
-  const pts: [number, number][] = [];
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI / 3) * i - Math.PI / 2;
-    pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
-  }
-  setFill(doc, BG_SOFT);
-  setDraw(doc, NEON);
-  doc.setLineWidth(1.1);
-  doc.lines(
-    pts.slice(1).map((p, i) => [p[0] - pts[i][0], p[1] - pts[i][1]])
-       .concat([[pts[0][0] - pts[5][0], pts[0][1] - pts[5][1]]]),
-    pts[0][0], pts[0][1], [1, 1], "FD"
-  );
-  setText(doc, NEON);
-  doc.setFont("courier", "bold");
-  doc.setFontSize(13);
-  doc.text(">_", cx, cy + 4, { align: "center" });
-
-  setText(doc, WHITE);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
-  doc.text("NOOB", cx + r + 8, cy - 1);
-  const w1 = doc.getTextWidth("NOOB ");
-  setText(doc, NEON);
-  doc.text("TO", cx + r + 8 + w1, cy - 1);
-  const w2 = doc.getTextWidth("NOOB TO ");
-  setText(doc, WHITE);
-  doc.text("ROOT", cx + r + 8 + w2, cy - 1);
-
-  setText(doc, MUTED);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(6.2);
-  doc.text("FROM ZERO TO ROOT", cx + r + 8, cy + 7, { charSpace: 1.1 });
-}
-
-/* ------------------------------------------------------------------ */
-/* Neon banner — wavy edges, course title hero                         */
-/* ------------------------------------------------------------------ */
-function drawBanner(
-  doc: jsPDF,
-  W: number,
-  yTop: number,
-  height: number,
-  title: string,
-  category?: string
-) {
-  // Outer glow (faint)
-  setFill(doc, NEON_DK);
-  doc.rect(0, yTop - 2, W, height + 4, "F");
-
-  // Main band
-  setFill(doc, NEON);
-  doc.rect(0, yTop, W, height, "F");
-
-  // Subtle gradient illusion via two overlapping translucent stripes
-  setFill(doc, [60, 230, 150]);
-  doc.rect(0, yTop, W * 0.55, height, "F");
-
-  // Wavy ink edges (top + bottom) — small triangles for jagged feel
+function drawBackdrop(doc: jsPDF, W: number, H: number) {
+  // Solid base
   setFill(doc, BG);
-  const seg = 14;
-  for (let x = 0; x < W; x += seg) {
-    // top zig
-    doc.triangle(x, yTop, x + seg / 2, yTop + 4, x + seg, yTop, "F");
-    // bottom zig
-    doc.triangle(x, yTop + height, x + seg / 2, yTop + height - 4, x + seg, yTop + height, "F");
-  }
+  doc.rect(0, 0, W, H, "F");
 
-  // Faint scanlines on banner
-  setDraw(doc, NEON_DK);
-  doc.setLineWidth(0.2);
-  for (let y = yTop + 6; y < yTop + height - 6; y += 4) {
-    doc.line(20, y, W - 20, y);
-  }
-
-  // Category eyebrow
-  if (category) {
-    setText(doc, INK);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text(category.toUpperCase(), W - 40, yTop + 22, { align: "right", charSpace: 3 });
-  }
-
-  // Course title — heavy condensed
-  setText(doc, INK);
-  doc.setFont("helvetica", "bold");
-  // shrink to fit
-  let size = 56;
-  doc.setFontSize(size);
-  while (doc.getTextWidth(title.toUpperCase()) > W - 80 && size > 22) {
-    size -= 2;
-    doc.setFontSize(size);
-  }
-  doc.text(title.toUpperCase(), W - 40, yTop + height / 2 + size * 0.32, { align: "right" });
-
-  // Sub label
-  setText(doc, INK);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.text("CERTIFICATE OF COMPLETION", W - 40, yTop + height - 14, { align: "right", charSpace: 3 });
-}
-
-/* ------------------------------------------------------------------ */
-/* Hero panel (left side, on top of banner)                            */
-/* ------------------------------------------------------------------ */
-function drawHeroPanel(doc: jsPDF, x: number, y: number, w: number, h: number, img?: string) {
-  if (img) {
-    try {
-      doc.addImage(img, detectImgFmt(img), x, y, w, h, undefined, "FAST");
-      // dark overlay tint for legibility
-      doc.setGState(new (doc as unknown as { GState: new (o: object) => unknown }).GState({ opacity: 0.35 }));
-      setFill(doc, BG);
-      doc.rect(x, y, w, h, "F");
-      doc.setGState(new (doc as unknown as { GState: new (o: object) => unknown }).GState({ opacity: 1 }));
-      return;
-    } catch {
-      /* fallthrough to vector */
+  // Faint dot grid
+  setFill(doc, HAIRLINE);
+  opacity(doc, 0.55);
+  for (let y = 30; y < H - 20; y += 18) {
+    for (let x = 30; x < W - 20; x += 18) {
+      doc.circle(x, y, 0.35, "F");
     }
   }
-  // Vector fallback — large hex mascot
-  setFill(doc, BG);
-  doc.rect(x, y, w, h, "F");
-  const cx = x + w / 2;
-  const cy = y + h / 2;
-  const r = Math.min(w, h) / 2 - 12;
+  opacity(doc, 1);
+
+  // Soft radial glows in corners (stacked translucent circles)
+  const glow = (cx: number, cy: number, color: readonly [number, number, number]) => {
+    for (let i = 6; i >= 1; i--) {
+      opacity(doc, 0.05);
+      setFill(doc, color);
+      doc.circle(cx, cy, i * 38, "F");
+    }
+    opacity(doc, 1);
+  };
+  glow(40, 40, NEON);
+  glow(W - 40, H - 40, CYAN);
+  glow(W - 60, 60, MAGENTA);
+
+  // Outer hairline frame with cut corners
+  const m = 22;
+  setDraw(doc, NEON);
+  doc.setLineWidth(0.6);
+  // top + bottom
+  doc.line(m + 14, m, W - m - 14, m);
+  doc.line(m + 14, H - m, W - m - 14, H - m);
+  // sides
+  doc.line(m, m + 14, m, H - m - 14);
+  doc.line(W - m, m + 14, W - m, H - m - 14);
+  // diagonal corner cuts
+  doc.line(m, m + 14, m + 14, m);
+  doc.line(W - m - 14, m, W - m, m + 14);
+  doc.line(m, H - m - 14, m + 14, H - m);
+  doc.line(W - m - 14, H - m, W - m, H - m - 14);
+
+  // Inner hairline
+  const m2 = 30;
+  setDraw(doc, HAIRLINE);
+  doc.setLineWidth(0.3);
+  doc.rect(m2, m2, W - m2 * 2, H - m2 * 2, "S");
+
+  // Corner brackets (terminal-style)
+  const bracket = (x: number, y: number, sx: number, sy: number) => {
+    setDraw(doc, CYAN);
+    doc.setLineWidth(0.8);
+    doc.line(x, y, x + 18 * sx, y);
+    doc.line(x, y, x, y + 18 * sy);
+  };
+  bracket(m2 + 8, m2 + 8, 1, 1);
+  bracket(W - m2 - 8, m2 + 8, -1, 1);
+  bracket(m2 + 8, H - m2 - 8, 1, -1);
+  bracket(W - m2 - 8, H - m2 - 8, -1, -1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Brand lockup                                                        */
+/* ------------------------------------------------------------------ */
+function drawBrand(doc: jsPDF, x: number, y: number) {
+  const r = 13;
+  const cx = x + r, cy = y + r;
   const pts: [number, number][] = [];
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI / 3) * i - Math.PI / 2;
     pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
   }
+  // Glow halo
+  opacity(doc, 0.25);
+  setFill(doc, NEON);
+  doc.circle(cx, cy, r + 4, "F");
+  opacity(doc, 1);
+
+  setFill(doc, BG_CARD);
   setDraw(doc, NEON);
-  doc.setLineWidth(2);
-  setFill(doc, BG_SOFT);
+  doc.setLineWidth(1.2);
   doc.lines(
     pts.slice(1).map((p, i) => [p[0] - pts[i][0], p[1] - pts[i][1]])
        .concat([[pts[0][0] - pts[5][0], pts[0][1] - pts[5][1]]]),
@@ -204,44 +153,75 @@ function drawHeroPanel(doc: jsPDF, x: number, y: number, w: number, h: number, i
   );
   setText(doc, NEON);
   doc.setFont("courier", "bold");
-  doc.setFontSize(r * 0.9);
-  doc.text(">_", cx, cy + r * 0.32, { align: "center" });
+  doc.setFontSize(12);
+  doc.text(">_", cx, cy + 4, { align: "center" });
+
+  // Wordmark
+  setText(doc, WHITE);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text("NOOB", cx + r + 10, cy - 1);
+  const w1 = doc.getTextWidth("NOOB ");
+  setText(doc, NEON);
+  doc.text("TO", cx + r + 10 + w1, cy - 1);
+  const w2 = doc.getTextWidth("NOOB TO ");
+  setText(doc, WHITE);
+  doc.text("ROOT", cx + r + 10 + w2, cy - 1);
+
+  setText(doc, MUTED);
+  doc.setFont("courier", "normal");
+  doc.setFontSize(6.4);
+  doc.text("// FROM ZERO TO ROOT", cx + r + 10, cy + 7, { charSpace: 0.6 });
 }
 
 /* ------------------------------------------------------------------ */
-/* Holographic seal                                                    */
+/* Holographic seal — refined concentric rings, no scallops            */
 /* ------------------------------------------------------------------ */
-function drawHologramSeal(doc: jsPDF, cx: number, cy: number, radius = 58) {
-  // Scalloped outer ring (24 bumps)
-  const bumps = 24;
+function drawSeal(doc: jsPDF, cx: number, cy: number, R = 56) {
+  // Outer aura
+  opacity(doc, 0.18);
   setFill(doc, MAGENTA);
-  for (let i = 0; i < bumps; i++) {
-    const a = (Math.PI * 2 * i) / bumps;
-    const px = cx + radius * Math.cos(a);
-    const py = cy + radius * Math.sin(a);
-    doc.circle(px, py, 4, "F");
-  }
-  // Holographic disk — layered translucent
+  doc.circle(cx, cy, R + 8, "F");
+  opacity(doc, 0.22);
+  setFill(doc, CYAN);
+  doc.circle(cx, cy, R + 4, "F");
+  opacity(doc, 1);
+
+  // Holographic disk (offset translucent layers)
   const layers: Array<readonly [number, number, number]> = [CYAN, MAGENTA, NEON];
   layers.forEach((c, i) => {
-    doc.setGState(new (doc as unknown as { GState: new (o: object) => unknown }).GState({ opacity: 0.45 - i * 0.1 }));
+    opacity(doc, 0.35 - i * 0.08);
     setFill(doc, c);
-    doc.circle(cx + (i - 1) * 4, cy + (i - 1) * 4, radius - 2, "F");
+    doc.circle(cx + (i - 1) * 3, cy + (i - 1) * 3, R, "F");
   });
-  doc.setGState(new (doc as unknown as { GState: new (o: object) => unknown }).GState({ opacity: 1 }));
+  opacity(doc, 1);
 
-  // Inner disk
-  setFill(doc, BG_SOFT);
-  doc.circle(cx, cy, radius - 14, "F");
+  // Tick marks around perimeter
   setDraw(doc, NEON);
-  doc.setLineWidth(0.8);
-  doc.circle(cx, cy, radius - 14, "S");
-  setDraw(doc, CYAN);
-  doc.setLineWidth(0.4);
-  doc.circle(cx, cy, radius - 20, "S");
+  doc.setLineWidth(0.6);
+  for (let i = 0; i < 60; i++) {
+    const a = (Math.PI * 2 * i) / 60;
+    const long = i % 5 === 0;
+    const r1 = R - (long ? 6 : 3);
+    const r2 = R - 1;
+    doc.line(
+      cx + r1 * Math.cos(a), cy + r1 * Math.sin(a),
+      cx + r2 * Math.cos(a), cy + r2 * Math.sin(a)
+    );
+  }
 
-  // Center hex glyph
-  const r = (radius - 28);
+  // Inner core
+  setFill(doc, BG);
+  doc.circle(cx, cy, R - 12, "F");
+  setDraw(doc, CYAN);
+  doc.setLineWidth(0.5);
+  doc.circle(cx, cy, R - 12, "S");
+  setDraw(doc, NEON_DK);
+  doc.setLineWidth(0.3);
+  doc.circle(cx, cy, R - 18, "S");
+
+  // Center hex
+  const r = R - 26;
   const pts: [number, number][] = [];
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI / 3) * i - Math.PI / 2;
@@ -255,25 +235,24 @@ function drawHologramSeal(doc: jsPDF, cx: number, cy: number, radius = 58) {
   );
   setText(doc, INK);
   doc.setFont("courier", "bold");
-  doc.setFontSize(r * 0.8);
-  doc.text(">_", cx, cy + r * 0.28, { align: "center" });
+  doc.setFontSize(r * 0.85);
+  doc.text(">_", cx, cy + r * 0.3, { align: "center" });
 
-  // Ring text
+  // Curved-ish ring text (straight, top + bottom)
   setText(doc, WHITE);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(6.5);
-  doc.text("NOOB TO ROOT  •  CERTIFIED", cx, cy + radius - 7, { align: "center", charSpace: 1.4 });
-  doc.text("SEAL OF APPROVAL  •  SINCE 2026", cx, cy - radius + 11, { align: "center", charSpace: 1.4 });
+  doc.setFontSize(6);
+  doc.text("NOOB TO ROOT  •  CERTIFIED", cx, cy - R + 6, { align: "center", charSpace: 1.4 });
+  doc.text("AUTHENTIC  •  SINCE 2026", cx, cy + R - 2, { align: "center", charSpace: 1.4 });
 }
 
 /* ------------------------------------------------------------------ */
 /* Signature block                                                     */
 /* ------------------------------------------------------------------ */
-function drawSignature(doc: jsPDF, x: number, y: number, sig: CertSignature) {
-  const w = 150;
+function drawSignature(doc: jsPDF, x: number, y: number, sig: CertSignature, w = 150) {
   if (sig.image) {
     try {
-      doc.addImage(sig.image, detectImgFmt(sig.image), x, y - 28, w, 30, undefined, "FAST");
+      doc.addImage(sig.image, detectImgFmt(sig.image), x, y - 28, w, 28, undefined, "FAST");
     } catch {
       setText(doc, WHITE);
       doc.setFont("times", "italic");
@@ -286,41 +265,48 @@ function drawSignature(doc: jsPDF, x: number, y: number, sig: CertSignature) {
     doc.setFontSize(20);
     doc.text(sig.name, x, y - 6);
   }
-  setDraw(doc, CYAN);
-  doc.setLineWidth(0.4);
+  setDraw(doc, NEON);
+  doc.setLineWidth(0.5);
   doc.line(x, y, x + w, y);
-  setText(doc, MUTED);
+  // tiny tick at end
+  doc.line(x + w, y - 2, x + w, y + 2);
+
+  setText(doc, WHITE);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
-  doc.text(sig.name.toUpperCase(), x, y + 11, { charSpace: 1.2 });
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.5);
-  doc.text(sig.role.toUpperCase(), x, y + 21, { charSpace: 1.2 });
+  doc.setFontSize(8.5);
+  doc.text(sig.name.toUpperCase(), x, y + 11, { charSpace: 1 });
+  setText(doc, MUTED);
+  doc.setFont("courier", "normal");
+  doc.setFontSize(7.2);
+  doc.text(sig.role.toUpperCase(), x, y + 20, { charSpace: 1 });
 }
 
 /* ------------------------------------------------------------------ */
-/* Metadata field                                                      */
+/* Metadata "chip"                                                     */
 /* ------------------------------------------------------------------ */
-function drawMetaField(doc: jsPDF, x: number, y: number, label: string, value: string) {
+function drawMetaChip(doc: jsPDF, x: number, y: number, w: number, h: number, label: string, value: string) {
+  // glass card
+  setFill(doc, BG_SOFT);
+  doc.roundedRect(x, y, w, h, 4, 4, "F");
+  setDraw(doc, HAIRLINE);
+  doc.setLineWidth(0.4);
+  doc.roundedRect(x, y, w, h, 4, 4, "S");
+  // accent bar
+  setFill(doc, NEON);
+  doc.rect(x, y, 2, h, "F");
+
   setText(doc, MUTED);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
-  doc.text(label.toUpperCase(), x, y, { charSpace: 1.4 });
+  doc.setFont("courier", "normal");
+  doc.setFontSize(6.8);
+  doc.text(label.toUpperCase(), x + 9, y + 11, { charSpace: 1.2 });
   setText(doc, WHITE);
-  doc.setFont("helvetica", "normal");
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.text(value, x, y + 14);
+  doc.text(value, x + 9, y + h - 8);
 }
 
 /* ------------------------------------------------------------------ */
 export async function generateCertificatePdf(data: CertData) {
-  // Resolve hero image (course cover) into a data URL if a remote URL was passed
-  let hero = data.heroImage;
-  if (hero && /^https?:/i.test(hero)) {
-    hero = (await urlToDataUrl(hero)) ?? undefined;
-  }
-
-  // Resolve signature images if any are remote
   const signaturesRaw = data.signatures ??
     (data.instructor
       ? [{ name: data.instructor, role: "Course Instructor" }, DEFAULT_SIGNATURES[0]]
@@ -339,118 +325,150 @@ export async function generateCertificatePdf(data: CertData) {
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
 
-  /* Background */
-  setFill(doc, BG);
-  doc.rect(0, 0, W, H, "F");
+  /* Backdrop + frame */
+  drawBackdrop(doc, W, H);
 
-  // Subtle grid texture
-  setDraw(doc, FAINT);
-  doc.setLineWidth(0.12);
-  for (let x = 0; x < W; x += 22) doc.line(x, 0, x, H);
-  for (let y = 0; y < H; y += 22) doc.line(0, y, W, y);
+  /* Header row: brand (left) + cert ID chip (right) */
+  drawBrand(doc, 50, 50);
 
-  // Inner cyan hairline frame
-  setDraw(doc, CYAN);
-  doc.setLineWidth(0.5);
-  doc.rect(18, 18, W - 36, H - 36);
-  setDraw(doc, NEON_DK);
-  doc.setLineWidth(0.3);
-  doc.rect(24, 24, W - 48, H - 48);
-
-  /* Brand */
-  drawBrand(doc, 40, 40);
-
-  /* Hero artwork — left column, vertically centered around banner */
-  const heroX = 40;
-  const heroY = 100;
-  const heroW = 230;
-  const heroH = 170;
-  drawHeroPanel(doc, heroX, heroY, heroW, heroH, hero);
-
-  /* Banner — overlaps hero on the left, dominates right side */
-  const bannerY = 130;
-  const bannerH = 110;
-  drawBanner(doc, W, bannerY, bannerH, data.course, data.category);
-
-  // Re-draw hero on top so banner doesn't cover it
-  drawHeroPanel(doc, heroX, heroY, heroW, heroH, hero);
-  // thin neon outline on hero
+  // Top-right chip with cert ID
+  const chipW = 200, chipH = 26;
+  const chipX = W - 50 - chipW;
+  const chipY = 50;
+  setFill(doc, BG_SOFT);
+  doc.roundedRect(chipX, chipY, chipW, chipH, 13, 13, "F");
   setDraw(doc, NEON);
-  doc.setLineWidth(1.2);
-  doc.rect(heroX, heroY, heroW, heroH, "S");
+  doc.setLineWidth(0.5);
+  doc.roundedRect(chipX, chipY, chipW, chipH, 13, 13, "S");
+  // status dot
+  setFill(doc, NEON);
+  doc.circle(chipX + 12, chipY + chipH / 2, 2.6, "F");
+  opacity(doc, 0.5);
+  doc.circle(chipX + 12, chipY + chipH / 2, 5, "F");
+  opacity(doc, 1);
+  setText(doc, MUTED);
+  doc.setFont("courier", "normal");
+  doc.setFontSize(7);
+  doc.text("CERT.ID", chipX + 22, chipY + 11, { charSpace: 1 });
+  setText(doc, WHITE);
+  doc.setFont("courier", "bold");
+  doc.setFontSize(9);
+  doc.text(data.number, chipX + 22, chipY + 21);
 
-  /* Granting sentence — terminal/mono */
-  const bodyY = heroY + heroH + 40;
+  /* Eyebrow + title block (centered) */
+  const titleY = 130;
+
+  // Category eyebrow with dashes
+  if (data.category || true) {
+    const cat = (data.category || "Certificate").toUpperCase();
+    setText(doc, NEON);
+    doc.setFont("courier", "bold");
+    doc.setFontSize(9);
+    const tw = doc.getTextWidth(cat);
+    doc.text(cat, W / 2, titleY, { align: "center", charSpace: 3 });
+    setDraw(doc, NEON);
+    doc.setLineWidth(0.6);
+    doc.line(W / 2 - tw / 2 - 30, titleY - 2.5, W / 2 - tw / 2 - 8, titleY - 2.5);
+    doc.line(W / 2 + tw / 2 + 8, titleY - 2.5, W / 2 + tw / 2 + 30, titleY - 2.5);
+  }
+
+  // "Certificate of Completion"
+  setText(doc, WHITE);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(34);
+  doc.text("CERTIFICATE OF COMPLETION", W / 2, titleY + 32, { align: "center", charSpace: 2 });
+
+  // Subtle gradient underline (cyan→neon→magenta) using stacked rects
+  const ulY = titleY + 40;
+  const ulW = 280;
+  const ulX = W / 2 - ulW / 2;
+  const seg = ulW / 30;
+  for (let i = 0; i < 30; i++) {
+    const t = i / 29;
+    const r = Math.round(CYAN[0] * (1 - t) + MAGENTA[0] * t);
+    const g = Math.round(CYAN[1] * (1 - t) + MAGENTA[1] * t);
+    const b = Math.round(CYAN[2] * (1 - t) + MAGENTA[2] * t);
+    doc.setFillColor(r, g, b);
+    doc.rect(ulX + i * seg, ulY, seg + 0.5, 1.5, "F");
+  }
+
+  /* Granting sentence */
   setText(doc, MUTED);
   doc.setFont("courier", "normal");
   doc.setFontSize(11);
-  doc.text("Is hereby granted to", 40, bodyY);
+  doc.text("$ this certificate is hereby granted to", W / 2, titleY + 66, { align: "center" });
 
-  /* Recipient name */
-  setText(doc, CYAN);
+  /* Recipient name — large display */
+  setText(doc, WHITE);
   doc.setFont("times", "bolditalic");
-  doc.setFontSize(40);
-  doc.text(data.recipient, 40, bodyY + 38);
+  doc.setFontSize(48);
+  doc.text(data.recipient, W / 2, titleY + 112, { align: "center" });
 
-  // Underline flourish
+  // Glow underline under name
+  const nameW = Math.min(doc.getTextWidth(data.recipient) + 60, W - 200);
+  const nx = W / 2 - nameW / 2;
   setDraw(doc, NEON);
-  doc.setLineWidth(0.6);
-  const nameW = Math.min(doc.getTextWidth(data.recipient) + 24, W - 320);
-  doc.line(40, bodyY + 46, 40 + nameW, bodyY + 46);
+  doc.setLineWidth(0.8);
+  doc.line(nx, titleY + 122, nx + nameW, titleY + 122);
+  opacity(doc, 0.4);
+  doc.setLineWidth(2.5);
+  doc.line(nx + 20, titleY + 122, nx + nameW - 20, titleY + 122);
+  opacity(doc, 1);
 
+  /* Course line */
   setText(doc, MUTED);
   doc.setFont("courier", "normal");
   doc.setFontSize(10);
-  doc.text(
-    `on completion of the Noob to Root course "${data.course}".`,
-    40, bodyY + 64
-  );
+  doc.text("for successfully completing the course", W / 2, titleY + 142, { align: "center" });
 
-  /* Footer block */
-  const footY = H - 110;
+  setText(doc, CYAN);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(`"${data.course}"`, W / 2, titleY + 162, { align: "center" });
 
-  // Signatures (left)
-  drawSignature(doc, 40, footY, signatures[0]);
-  if (signatures[1]) drawSignature(doc, 220, footY, signatures[1]);
-
-  // Seal (right)
-  drawHologramSeal(doc, W - 100, footY - 4, 56);
-
-  /* Metadata grid */
-  const metaY = H - 60;
+  /* Metadata chips row */
+  const metaY = H - 175;
   const cols = [
-    { label: "Date", value: data.date },
-    { label: "CPE Credits", value: data.cpeCredits != null ? String(data.cpeCredits) : "—" },
-    { label: "Length", value: data.lengthHours ? `${data.lengthHours} hours` : "—" },
-    { label: "Location", value: data.location ?? "Online" },
+    { label: "Date Issued",  value: data.date },
+    { label: "Length",       value: data.lengthHours ? `${data.lengthHours} hrs` : "—" },
+    { label: "CPE Credits",  value: data.cpeCredits != null ? String(data.cpeCredits) : "—" },
+    { label: "Location",     value: data.location ?? "Online" },
   ];
-  cols.forEach((c, i) => drawMetaField(doc, 40 + i * 130, metaY, c.label, c.value));
+  const chipsTotalW = W - 100;
+  const cw = (chipsTotalW - 3 * 10) / 4;
+  cols.forEach((c, i) => drawMetaChip(doc, 50 + i * (cw + 10), metaY, cw, 38, c.label, c.value));
 
-  /* Subjects (only if there's room — small caption above metadata) */
+  /* Subjects line */
   if (data.subjects && data.subjects.length) {
     setText(doc, MUTED);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
-    doc.text("SUBJECT AREAS COVERED", W - 40, metaY, { align: "right", charSpace: 1.4 });
+    doc.setFont("courier", "normal");
+    doc.setFontSize(7.5);
+    doc.text("// SUBJECT AREAS COVERED", 50, metaY - 14, { charSpace: 1.2 });
     setText(doc, WHITE);
-    doc.setFont("helvetica", "italic");
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(8.5);
-    const text = data.subjects.join(", ");
-    const lines = doc.splitTextToSize(text, 320);
-    doc.text(lines.slice(0, 2), W - 40, metaY + 12, { align: "right" });
+    const lines = doc.splitTextToSize(data.subjects.join("  ·  "), W - 100);
+    doc.text(lines.slice(0, 1), 50, metaY - 4);
   }
 
-  /* Certificate ID (bottom strip) */
-  setDraw(doc, FAINT);
+  /* Footer: signatures (left) + seal (right) */
+  const footY = H - 70;
+  drawSignature(doc, 50, footY, signatures[0], 150);
+  if (signatures[1]) drawSignature(doc, 220, footY, signatures[1], 150);
+
+  // Seal
+  drawSeal(doc, W - 100, footY - 18, 48);
+
+  /* Bottom verify strip */
+  setDraw(doc, HAIRLINE);
   doc.setLineWidth(0.3);
-  doc.line(40, H - 30, W - 40, H - 30);
+  doc.line(50, H - 36, W - 50, H - 36);
   setText(doc, MUTED);
   doc.setFont("courier", "normal");
-  doc.setFontSize(8);
-  doc.text(`CERTIFICATE ID:  ${data.number}`, 40, H - 18, { charSpace: 1 });
-  setText(doc, FAINT);
-  doc.setFont("helvetica", "normal");
-  doc.text("Verify authenticity at  noobtoroot.com/verify", W - 40, H - 18, { align: "right" });
+  doc.setFontSize(7);
+  doc.text(`SHA  ${data.number}  ::  AUTH OK`, 50, H - 24, { charSpace: 1 });
+  setText(doc, NEON);
+  doc.text("verify  →  noobtoroot.com/verify", W - 50, H - 24, { align: "right", charSpace: 1 });
 
   doc.save(`noob-to-root-certificate-${data.number}.pdf`);
 }
