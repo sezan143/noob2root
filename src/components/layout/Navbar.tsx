@@ -34,12 +34,12 @@ const Navbar = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-24 flex items-center justify-between">
         <Link to="/" className="flex items-center group" aria-label="Noob to Root home">
           <img
             src={logo}
             alt="Noob to Root"
-            className="h-14 md:h-16 w-auto transition-transform duration-300 group-hover:scale-105"
+            className="h-20 md:h-24 w-auto transition-transform duration-300 group-hover:scale-105"
           />
         </Link>
 
