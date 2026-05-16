@@ -16,8 +16,15 @@ interface SEOProps {
 }
 
 const SITE_NAME = "Noob to Root";
+const SITE_URL = "https://noobtoroot.com";
 const DEFAULT_DESC =
   "Noob to Root — Hands-on tech tutorials, ethical hacking guides, Linux, networking, and dev walkthroughs from zero to root.";
+
+const toAbsolute = (url?: string) => {
+  if (!url) return `${SITE_URL}/og-default.jpg`;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${SITE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+};
 
 const SEO = ({
   title,
