@@ -1,0 +1,13 @@
+# Noob to Root
+
+> Hands-on tech tutorials, ethical hacking guides, Linux, networking, DevOps, and developer walkthroughs — from zero to root.
+
+Noob to Root is a tutorial blog and learning academy for curious learners. We publish practical, command-line-first guides and interactive courses with quizzes, terminal practice, and verifiable certificates.
+
+## Pages
+
+- [Home](/): Featured tutorials and latest posts.
+- [Blog](/blog): All tutorials and guides.
+- [Categories](/categories): Browse tutorials by topic (Linux, hacking, networking, DevOps).
+- [Courses](/courses): Interactive courses with terminal practice and certificates.
+- [About](/about): About Noob to Root and the team.

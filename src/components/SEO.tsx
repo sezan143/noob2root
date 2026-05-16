@@ -16,8 +16,15 @@ interface SEOProps {
 }
 
 const SITE_NAME = "Noob to Root";
+const SITE_URL = "https://noobtoroot.com";
 const DEFAULT_DESC =
   "Noob to Root — Hands-on tech tutorials, ethical hacking guides, Linux, networking, and dev walkthroughs from zero to root.";
+
+const toAbsolute = (url?: string) => {
+  if (!url) return `${SITE_URL}/og-default.jpg`;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${SITE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+};
 
 const SEO = ({
   title,
@@ -33,11 +40,17 @@ const SEO = ({
   canonical,
   noindex,
 }: SEOProps) => {
-  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+  // Keep titles under 60 chars for search results. Only append site name if it fits.
+  const suffix = ` | ${SITE_NAME}`;
+  const fullTitle = title.includes(SITE_NAME)
+    ? title
+    : title.length + suffix.length <= 60
+      ? `${title}${suffix}`
+      : title;
   const pageUrl =
     url ?? (typeof window !== "undefined" ? window.location.href : "");
   const canon = canonical ?? pageUrl;
-  const ogImage = image ?? "/og-default.jpg";
+  const ogImage = toAbsolute(image);
 
   return (
     <Helmet>
