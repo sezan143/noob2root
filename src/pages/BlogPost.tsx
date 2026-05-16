@@ -103,6 +103,7 @@ const BlogPost = () => {
         updatedAt={(post as any).updated_at}
         author={post.authors?.name}
         tags={post.tags ?? []}
+        canonical={`https://noobtoroot.com/blog/${post.slug}`}
         jsonLd={articleJsonLd}
       />
       <ReadingProgressBar />

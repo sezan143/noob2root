@@ -13,7 +13,7 @@
   <url>
     <loc>https://noobtoroot.com/categories</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://noobtoroot.com/courses</loc>
@@ -24,5 +24,28 @@
     <loc>https://noobtoroot.com/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/courses/linux-basics-from-zero-to-comfortable</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/courses/master-the-terminal-and-bash</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/courses/introduction-to-ethical-hacking</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/blog?category=ai-in-cybersecurity</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
