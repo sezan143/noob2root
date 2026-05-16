@@ -86,9 +86,30 @@ export default function CourseDetail() {
   const totalLessons = lessons.length;
   const pct = totalLessons === 0 ? 0 : Math.round((progressCount / totalLessons) * 100);
 
+  const courseJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.short_description ?? course.description ?? "",
+    provider: {
+      "@type": "Organization",
+      name: "Noob to Root",
+      sameAs: "https://noobtoroot.com",
+    },
+    ...(course.instructor_name && {
+      instructor: { "@type": "Person", name: course.instructor_name },
+    }),
+    url: `https://noobtoroot.com/courses/${course.slug}`,
+  };
+
   return (
     <Layout>
-      <SEO title={`${course.title} — Noob to Root Courses`} description={course.short_description ?? ""} />
+      <SEO
+        title={course.title}
+        description={course.short_description ?? ""}
+        image={course.cover_image ?? undefined}
+        jsonLd={courseJsonLd}
+      />
       <section className="pt-28 pb-16">
         <div className="container mx-auto px-4 grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
