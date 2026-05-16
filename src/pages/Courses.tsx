@@ -39,11 +39,24 @@ export default function Courses() {
     return () => { cancelled = true; };
   }, []);
 
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Noob to Root Courses",
+    itemListElement: courses.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://noobtoroot.com/courses/${c.slug}`,
+      name: c.title,
+    })),
+  };
+
   return (
     <Layout>
       <SEO
-        title="Courses — Noob to Root Learning Academy"
+        title="Courses — Learning Academy"
         description="Hands-on tech courses with quizzes, terminal practice, and verifiable certificates. Linux, hacking, networking, DevOps."
+        jsonLd={itemListJsonLd}
       />
       <section className="container mx-auto px-4 pt-32 pb-12">
         <motion.div
