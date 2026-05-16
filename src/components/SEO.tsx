@@ -40,11 +40,17 @@ const SEO = ({
   canonical,
   noindex,
 }: SEOProps) => {
-  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+  // Keep titles under 60 chars for search results. Only append site name if it fits.
+  const suffix = ` | ${SITE_NAME}`;
+  const fullTitle = title.includes(SITE_NAME)
+    ? title
+    : title.length + suffix.length <= 60
+      ? `${title}${suffix}`
+      : title;
   const pageUrl =
     url ?? (typeof window !== "undefined" ? window.location.href : "");
   const canon = canonical ?? pageUrl;
-  const ogImage = image ?? "/og-default.jpg";
+  const ogImage = toAbsolute(image);
 
   return (
     <Helmet>
