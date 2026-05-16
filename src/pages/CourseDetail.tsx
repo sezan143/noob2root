@@ -106,8 +106,16 @@ export default function CourseDetail() {
     <Layout>
       <SEO
         title={course.title}
-        description={course.short_description ?? ""}
+        description={
+          course.short_description ||
+          (course.description
+            ? course.description.replace(/\s+/g, " ").trim().slice(0, 155)
+            : `Master ${course.title} on Noob to Root — hands-on lessons, quizzes, terminal labs, and a verifiable certificate.`)
+        }
         image={course.cover_image ?? undefined}
+        type="article"
+        author={course.instructor_name ?? undefined}
+        canonical={`https://noobtoroot.com/courses/${course.slug}`}
         jsonLd={courseJsonLd}
       />
       <section className="pt-28 pb-16">
