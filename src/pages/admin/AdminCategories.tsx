@@ -1,13 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Search, type LucideIcon } from "lucide-react";
+import * as LucideIcons from "lucide-react";
+
+const ICON_CHOICES = [
+  "Brain","Shield","Cloud","Code","Terminal","Cpu","Database","Server","Lock","Key",
+  "Bug","Wifi","Network","GitBranch","Github","Globe","Search","Zap","Rocket","Flame",
+  "Sparkles","Star","Heart","BookOpen","GraduationCap","Lightbulb","Settings","Wrench",
+  "Hammer","Layers","Package","Box","Folder","FileCode","FileText","Image","Camera",
+  "Monitor","Smartphone","Headphones","Music","Video","Mic","Radio","Tv","Gamepad2",
+  "Trophy","Award","Target","Flag","MapPin","Compass","Map","Building","Home","Briefcase",
+  "ShoppingCart","CreditCard","DollarSign","TrendingUp","BarChart","PieChart","Activity",
+  "Users","User","UserCheck","MessageCircle","Mail","Send","Bell","Calendar","Clock",
+  "Coffee","Pizza","Leaf","TreePine","Sun","Moon","CloudRain","Snowflake","Eye","EyeOff",
+];
+
+const getIcon = (name?: string | null): LucideIcon | null => {
+  if (!name) return null;
+  const Icon = (LucideIcons as unknown as Record<string, LucideIcon>)[name];
+  return Icon ?? null;
+};
 
 interface CategoryRow { id: string; name: string; slug: string; description: string | null; icon: string | null; }
 
@@ -70,7 +90,12 @@ export default function AdminCategories() {
               ? <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-12">No categories yet.</TableCell></TableRow>
               : categories.map((c) => (
                 <TableRow key={c.id}>
-                  <TableCell className="font-medium">{c.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      {(() => { const I = getIcon(c.icon); return I ? <I className="h-4 w-4 text-primary" /> : null; })()}
+                      {c.name}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">{c.slug}</TableCell>
                   <TableCell className="text-muted-foreground text-sm max-w-xs truncate">{c.description ?? "—"}</TableCell>
                   <TableCell>
@@ -91,7 +116,10 @@ export default function AdminCategories() {
             <div className="space-y-2"><Label>Name</Label><Input value={name} onChange={(e) => { setName(e.target.value); if (!editing) setSlug(generateSlug(e.target.value)); }} /></div>
             <div className="space-y-2"><Label>Slug</Label><Input value={slug} onChange={(e) => setSlug(e.target.value)} /></div>
             <div className="space-y-2"><Label>Description</Label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} /></div>
-            <div className="space-y-2"><Label>Icon (Lucide name)</Label><Input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="e.g. Brain, Shield, Cloud" /></div>
+            <div className="space-y-2">
+              <Label>Icon</Label>
+              <IconPicker value={icon} onChange={setIcon} />
+            </div>
             <Button onClick={handleSave} className="w-full">Save</Button>
           </div>
         </DialogContent>
@@ -99,3 +127,56 @@ export default function AdminCategories() {
     </div>
   );
 }
+
+function IconPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const Selected = getIcon(value);
+  const filtered = useMemo(
+    () => ICON_CHOICES.filter((n) => n.toLowerCase().includes(query.toLowerCase())),
+    [query]
+  );
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" type="button" className="w-full justify-start gap-2 font-normal">
+          {Selected ? <Selected className="h-4 w-4 text-primary" /> : <Search className="h-4 w-4 text-muted-foreground" />}
+          <span className="text-sm">{value || "Choose an icon"}</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 p-3" align="start">
+        <Input
+          autoFocus
+          placeholder="Search icons..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="mb-3"
+        />
+        <div className="grid grid-cols-8 gap-1 max-h-64 overflow-y-auto">
+          {filtered.map((name) => {
+            const I = getIcon(name);
+            if (!I) return null;
+            const active = name === value;
+            return (
+              <button
+                key={name}
+                type="button"
+                title={name}
+                onClick={() => { onChange(name); setOpen(false); }}
+                className={`flex items-center justify-center h-9 w-9 rounded-md border transition-colors ${active ? "border-primary bg-primary/10 text-primary" : "border-transparent hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+              >
+                <I className="h-4 w-4" />
+              </button>
+            );
+          })}
+        </div>
+        {value && (
+          <Button variant="ghost" size="sm" className="w-full mt-2" onClick={() => { onChange(""); setOpen(false); }}>
+            Clear
+          </Button>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
