@@ -127,3 +127,56 @@ export default function AdminCategories() {
     </div>
   );
 }
+
+function IconPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const Selected = getIcon(value);
+  const filtered = useMemo(
+    () => ICON_CHOICES.filter((n) => n.toLowerCase().includes(query.toLowerCase())),
+    [query]
+  );
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" type="button" className="w-full justify-start gap-2 font-normal">
+          {Selected ? <Selected className="h-4 w-4 text-primary" /> : <Search className="h-4 w-4 text-muted-foreground" />}
+          <span className="text-sm">{value || "Choose an icon"}</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 p-3" align="start">
+        <Input
+          autoFocus
+          placeholder="Search icons..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="mb-3"
+        />
+        <div className="grid grid-cols-8 gap-1 max-h-64 overflow-y-auto">
+          {filtered.map((name) => {
+            const I = getIcon(name);
+            if (!I) return null;
+            const active = name === value;
+            return (
+              <button
+                key={name}
+                type="button"
+                title={name}
+                onClick={() => { onChange(name); setOpen(false); }}
+                className={`flex items-center justify-center h-9 w-9 rounded-md border transition-colors ${active ? "border-primary bg-primary/10 text-primary" : "border-transparent hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+              >
+                <I className="h-4 w-4" />
+              </button>
+            );
+          })}
+        </div>
+        {value && (
+          <Button variant="ghost" size="sm" className="w-full mt-2" onClick={() => { onChange(""); setOpen(false); }}>
+            Clear
+          </Button>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
