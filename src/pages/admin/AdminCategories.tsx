@@ -12,15 +12,27 @@ import { Plus, Pencil, Trash2, Loader2, Search, type LucideIcon } from "lucide-r
 import * as LucideIcons from "lucide-react";
 
 const ICON_CHOICES = [
-  "Brain","Shield","Cloud","Code","Terminal","Cpu","Database","Server","Lock","Key",
-  "Bug","Wifi","Network","GitBranch","Github","Globe","Search","Zap","Rocket","Flame",
-  "Sparkles","Star","Heart","BookOpen","GraduationCap","Lightbulb","Settings","Wrench",
-  "Hammer","Layers","Package","Box","Folder","FileCode","FileText","Image","Camera",
-  "Monitor","Smartphone","Headphones","Music","Video","Mic","Radio","Tv","Gamepad2",
+  // Cybersecurity & hacking
+  "Shield","ShieldCheck","ShieldAlert","ShieldX","ShieldOff","Lock","LockKeyhole","Unlock",
+  "Key","KeyRound","KeySquare","Fingerprint","ScanFace","ShieldQuestion","UserLock",
+  "Bug","BugOff","BugPlay","Skull","Ghost","Crosshair","Radar","Radiation","Biohazard",
+  "EyeOff","Eye","Webhook","Spline",
+  // Linux / terminal / dev
+  "Terminal","TerminalSquare","SquareTerminal","Code","Code2","Codepen","FileCode","FileTerminal",
+  "Command","Power","Cpu","CpuArchitecture","MemoryStick","HardDrive","Microchip","Binary","Hash",
+  // Network & infra
+  "Network","Wifi","WifiOff","Router","Cable","Ethernet","Globe","Globe2","Satellite","Antenna",
+  "Server","ServerCog","ServerCrash","ServerOff","Database","DatabaseZap","Cloud","CloudCog","CloudOff",
+  "Container","Boxes","Workflow","GitBranch","GitMerge","GitPullRequest","Github","Gitlab",
+  // DevOps / tools
+  "Settings","Settings2","Wrench","Hammer","Cog","Layers","Package","Box","FlaskConical",
+  "Activity","BarChart","BarChart3","LineChart","PieChart","TrendingUp","Gauge","Zap","ZapOff",
+  // General
+  "Brain","BrainCircuit","Rocket","Flame","Sparkles","Star","Heart","BookOpen","GraduationCap",
+  "Lightbulb","Folder","FolderLock","FileText","FileLock","Image","Camera","Search","SearchCheck",
+  "Monitor","Smartphone","Headphones","Mic","Radio","Tv","Gamepad2",
   "Trophy","Award","Target","Flag","MapPin","Compass","Map","Building","Home","Briefcase",
-  "ShoppingCart","CreditCard","DollarSign","TrendingUp","BarChart","PieChart","Activity",
   "Users","User","UserCheck","MessageCircle","Mail","Send","Bell","Calendar","Clock",
-  "Coffee","Pizza","Leaf","TreePine","Sun","Moon","CloudRain","Snowflake","Eye","EyeOff",
 ];
 
 const getIcon = (name?: string | null): LucideIcon | null => {

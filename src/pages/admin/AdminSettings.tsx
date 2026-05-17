@@ -158,8 +158,8 @@ export default function AdminSettings() {
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <Label>Enable Comments</Label>
-              <p className="text-sm text-muted-foreground">Allow readers to leave comments (coming soon)</p>
+            <Label>Enable Comments</Label>
+              <p className="text-sm text-muted-foreground">Allow signed-in readers to leave comments on blog posts</p>
             </div>
             <Switch checked={settings.enable_comments === "true"} onCheckedChange={() => toggleBool("enable_comments")} />
           </div>
@@ -179,6 +179,12 @@ export default function AdminSettings() {
           <div className="space-y-1.5">
             <Label htmlFor="analytics_id">Google Analytics ID</Label>
             <Input id="analytics_id" value={settings.analytics_id ?? ""} placeholder="G-XXXXXXXXXX" onChange={(e) => update("analytics_id", e.target.value)} />
+            <p className="text-xs text-muted-foreground">GA4 Measurement ID. Loaded on every page; tracks SPA route changes.</p>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="gtm_id">Google Tag Manager ID</Label>
+            <Input id="gtm_id" value={settings.gtm_id ?? ""} placeholder="GTM-XXXXXXX" onChange={(e) => update("gtm_id", e.target.value)} />
+            <p className="text-xs text-muted-foreground">Optional. Loads the GTM container script and noscript fallback.</p>
           </div>
         </CardContent>
       </Card>
