@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, Eye, Calendar, Share2, Twitter, Linkedin, Loader2 } from "lucide-react";
@@ -63,10 +63,36 @@ const BlogPost = () => {
     );
   }
 
-  // Extract headings from HTML content
-  const headings = post.content
-    ? [...(post.content.matchAll(/<h2[^>]*>(.*?)<\/h2>/gi))].map((m) => m[1].replace(/<[^>]*>/g, ""))
-    : [];
+  // Parse content, inject stable IDs on headings, and build TOC
+  const { processedHtml, headings } = useMemo(() => {
+    if (!post.content) return { processedHtml: "", headings: [] as { id: string; text: string; level: number }[] };
+    const sanitized = DOMPurify.sanitize(post.content);
+    if (typeof window === "undefined") return { processedHtml: sanitized, headings: [] };
+    const slugify = (s: string) =>
+      s.toLowerCase().trim().replace(/[^\p{L}\p{N}\s-]/gu, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "") || "section";
+    const doc = new DOMParser().parseFromString(sanitized, "text/html");
+    const items: { id: string; text: string; level: number }[] = [];
+    const used = new Set<string>();
+    doc.querySelectorAll("h1, h2, h3").forEach((h) => {
+      const text = (h.textContent || "").trim();
+      if (!text) return;
+      let id = h.getAttribute("id") || slugify(text);
+      let i = 2;
+      const base = id;
+      while (used.has(id)) id = `${base}-${i++}`;
+      used.add(id);
+      h.setAttribute("id", id);
+      items.push({ id, text, level: h.tagName === "H1" ? 1 : h.tagName === "H2" ? 2 : 3 });
+    });
+    return { processedHtml: doc.body.innerHTML, headings: items };
+  }, [post.content]);
+
+  const scrollToHeading = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top, behavior: "smooth" });
+  };
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const plainExcerpt =
@@ -171,8 +197,8 @@ const BlogPost = () => {
               </div>
             )}
 
-            {post.content && (
-              <div className="prose-custom" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />
+            {processedHtml && (
+              <div className="prose-custom" dangerouslySetInnerHTML={{ __html: processedHtml }} />
             )}
 
             {/* Ad Banner */}
@@ -232,11 +258,12 @@ const BlogPost = () => {
                 <nav className="flex flex-col gap-2">
                   {headings.map((heading) => (
                     <a
-                      key={heading}
-                      href={`#${heading.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="text-xs text-muted-foreground hover:text-primary transition-colors leading-relaxed"
+                      key={heading.id}
+                      href={`#${heading.id}`}
+                      onClick={(e) => { e.preventDefault(); scrollToHeading(heading.id); history.replaceState(null, "", `#${heading.id}`); }}
+                      className={`text-xs text-muted-foreground hover:text-primary transition-colors leading-relaxed ${heading.level === 3 ? "pl-3" : ""}`}
                     >
-                      {heading}
+                      {heading.text}
                     </a>
                   ))}
                 </nav>
