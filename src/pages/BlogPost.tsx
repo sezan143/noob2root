@@ -44,28 +44,9 @@ const BlogPost = () => {
     fetchPost();
   }, [slug]);
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-      </Layout>
-    );
-  }
-
-  if (!post) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-heading font-bold text-foreground mb-4">Post not found</h1>
-          <Link to="/blog" className="text-primary hover:underline">Back to Blog</Link>
-        </div>
-      </Layout>
-    );
-  }
-
-  // Parse content, inject stable IDs on headings, and build TOC
+  // Parse content, inject stable IDs on headings, and build TOC (must run before early returns)
   const { processedHtml, headings } = useMemo(() => {
-    if (!post.content) return { processedHtml: "", headings: [] as { id: string; text: string; level: number }[] };
+    if (!post?.content) return { processedHtml: "", headings: [] as { id: string; text: string; level: number }[] };
     const sanitized = DOMPurify.sanitize(post.content);
     if (typeof window === "undefined") return { processedHtml: sanitized, headings: [] };
     const slugify = (s: string) =>
@@ -85,7 +66,26 @@ const BlogPost = () => {
       items.push({ id, text, level: h.tagName === "H1" ? 1 : h.tagName === "H2" ? 2 : 3 });
     });
     return { processedHtml: doc.body.innerHTML, headings: items };
-  }, [post.content]);
+  }, [post?.content]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      </Layout>
+    );
+  }
+
+  if (!post) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-20 text-center">
+          <h1 className="text-2xl font-heading font-bold text-foreground mb-4">Post not found</h1>
+          <Link to="/blog" className="text-primary hover:underline">Back to Blog</Link>
+        </div>
+      </Layout>
+    );
+  }
 
   const scrollToHeading = (id: string) => {
     const el = document.getElementById(id);
