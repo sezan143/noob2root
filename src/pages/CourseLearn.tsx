@@ -853,55 +853,31 @@ function CertificateClaimButton({
     );
   }
 
-  if (!showPay) {
-    return (
-      <div className={cn("space-y-3", large && "text-left")}>
-        <Input placeholder="Your full name (as it appears on certificate)" value={name} onChange={(e) => setName(e.target.value)} />
-        {needsPayment ? (
-          <Button onClick={() => setShowPay(true)} className="w-full bg-learn hover:bg-learn/90 text-learn-foreground font-semibold">
-            <Award className="w-4 h-4 mr-2" /> Get certificate — {formatPrice(course.certificate_price_cents)}
-          </Button>
-        ) : (
-          <Button onClick={() => issue(false)} className="w-full bg-learn hover:bg-learn/90 text-learn-foreground font-semibold">
-            <Download className="w-4 h-4 mr-2" /> Generate free certificate
-          </Button>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-4 text-left bg-card/50 rounded-lg p-4 border border-border">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-xs text-muted-foreground">Certificate of Completion</div>
-          <div className="font-semibold">{course.title}</div>
+    <div className={cn("space-y-3", large && "text-left")}>
+      <Input placeholder="Your full name (as it appears on certificate)" value={name} onChange={(e) => setName(e.target.value)} />
+      {needsPayment ? (
+        <div className="rounded-lg border border-border bg-card/50 p-4 text-sm text-muted-foreground space-y-2">
+          <p className="font-medium text-foreground">Paid certificate ({formatPrice(course.certificate_price_cents)})</p>
+          <p>
+            Paid certificates require a verified payment processed server-side. Connect a
+            payment provider and an admin-only issuing endpoint to enable purchases — client
+            checkout is disabled to prevent payment bypass.
+          </p>
         </div>
-        <div className="text-2xl font-bold text-learn">{formatPrice(course.certificate_price_cents)}</div>
-      </div>
-      <div className="space-y-2">
-        <Input placeholder="Card number" defaultValue="4242 4242 4242 4242" />
-        <div className="grid grid-cols-2 gap-2">
-          <Input placeholder="MM/YY" defaultValue="12/29" />
-          <Input placeholder="CVC" defaultValue="123" />
-        </div>
-        <p className="text-[11px] text-muted-foreground">Demo checkout — no real charge.</p>
-      </div>
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={() => setShowPay(false)} className="flex-1">Cancel</Button>
+      ) : (
         <Button
           disabled={paying}
           onClick={async () => {
             setPaying(true);
-            await new Promise((r) => setTimeout(r, 1200));
-            await issue(true);
+            await issue(false);
             setPaying(false);
           }}
-          className="flex-1 bg-learn hover:bg-learn/90 text-learn-foreground font-semibold"
+          className="w-full bg-learn hover:bg-learn/90 text-learn-foreground font-semibold"
         >
-          {paying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing…</> : `Pay ${formatPrice(course.certificate_price_cents)}`}
+          {paying ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating…</> : <><Download className="w-4 h-4 mr-2" /> Generate free certificate</>}
         </Button>
-      </div>
+      )}
     </div>
   );
 }
