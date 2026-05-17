@@ -24,7 +24,17 @@ serve(async (req) => {
   const settingsMap: Record<string, string> = {};
   settings?.forEach((s: any) => { settingsMap[s.key] = s.value ?? ""; });
 
-  const siteUrl = url.searchParams.get("site_url") || "https://frogtech.blog";
+  const rawSiteUrl = url.searchParams.get("site_url") || "https://frogtech.blog";
+  // Only allow http/https URL origins; reject anything else to prevent XML injection.
+  let siteUrl = "https://frogtech.blog";
+  try {
+    const u = new URL(rawSiteUrl);
+    if (u.protocol === "http:" || u.protocol === "https:") {
+      siteUrl = u.origin;
+    }
+  } catch {
+    // keep default
+  }
   const siteName = settingsMap.site_name || "FrogTech";
   const siteDesc = settingsMap.site_description || settingsMap.site_tagline || "Tech blog";
   const type = url.searchParams.get("type") || "rss";
