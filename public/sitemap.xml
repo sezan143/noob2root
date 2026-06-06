@@ -32,62 +32,8 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://noobtoroot.com/blog/agentic-ai-red-teaming-prompt-injection</loc>
-    <lastmod>2026-05-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://noobtoroot.com/blog/active-directory-enumeration-cheat-sheet</loc>
-    <lastmod>2026-05-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/api-penetration-testing-bola-jwt-guide</loc>
-    <lastmod>2026-05-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/linux-privilege-escalation-masterclass-abusing-suid-and-posix-capabilities-2026-guide</loc>
-    <lastmod>2026-05-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/cloud-red-teaming-aws-iam-privilege-escalation</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/breaking-wpa3-sae-handshake-cracking-guide</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/red-teaming-for-beginners-step-by-step</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/how-to-start-red-teaming-with-no-experience</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/what-is-red-teaming-in-cybersecurity-explained</loc>
-    <lastmod>2026-05-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog/devsecops-cicd-pipeline-supply-chain-exploitation-guide</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-05-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -108,30 +54,5 @@
     <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog?category=wireless-security</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog?category=ai-in-cybersecurity</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog?category=red-teaming</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog?category=cloud-security</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/blog?category=linux-security</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
   </url>
 </urlset>

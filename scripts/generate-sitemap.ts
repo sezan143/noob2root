@@ -67,14 +67,9 @@ async function fetchDynamic(): Promise<SitemapEntry[]> {
       });
     });
 
-    const { data: cats } = await supabase.from("categories").select("slug");
-    cats?.forEach((c: any) => {
-      entries.push({
-        path: `/blog?category=${c.slug}`,
-        changefreq: "weekly",
-        priority: "0.6",
-      });
-    });
+    // Note: /blog?category=<slug> is intentionally NOT emitted — query-string
+    // variants resolve to /blog and get flagged by Google as "Alternate page
+    // with proper canonical tag".
 
     return entries;
   } catch (err) {
