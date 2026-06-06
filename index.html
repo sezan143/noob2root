@@ -9,6 +9,28 @@
     <meta name="theme-color" content="#0a0a14" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
 
+    <!-- Preconnect to font origins for faster FCP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Non-blocking font load with font-display: swap -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      />
+    </noscript>
+
     <meta property="og:site_name" content="Noob to Root" />
     <meta property="og:title" content="Noob to Root — Tech Tutorials, Linux & Hacking Guides" />
     <meta property="og:description" content="Hands-on tech tutorials, ethical hacking guides, Linux, networking, and developer walkthroughs from zero to root." />

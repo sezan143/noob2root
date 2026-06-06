@@ -19,4 +19,27 @@ export default defineConfig(({ mode }) => ({
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
   },
+  build: {
+    target: "es2020",
+    cssCodeSplit: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        // Split heavy deps into their own chunks so the initial bundle stays small.
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "query-vendor": ["@tanstack/react-query"],
+          "motion-vendor": ["framer-motion"],
+          "supabase-vendor": ["@supabase/supabase-js"],
+          "editor-vendor": [
+            "@tiptap/react",
+            "@tiptap/starter-kit",
+            "@tiptap/extension-image",
+            "@tiptap/extension-link",
+            "@tiptap/extension-placeholder",
+          ],
+        },
+      },
+    },
+  },
 }));
