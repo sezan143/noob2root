@@ -196,7 +196,7 @@ const Index = () => {
                 <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-primary" /> Real-world labs</span>
                 <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-primary" /> No fluff content</span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Right: terminal */}
             <motion.div
