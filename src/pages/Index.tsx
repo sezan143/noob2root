@@ -150,12 +150,8 @@ const Index = () => {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-10 items-center">
-            {/* Left: copy */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
+            {/* Left: copy — no fade-in so the static hero stays the LCP element */}
+            <div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-mono uppercase tracking-widest mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 Cybersecurity · Linux · DevOps
@@ -200,7 +196,7 @@ const Index = () => {
                 <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-primary" /> Real-world labs</span>
                 <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-primary" /> No fluff content</span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Right: terminal */}
             <motion.div
