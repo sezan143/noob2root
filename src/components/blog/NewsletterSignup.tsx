@@ -60,14 +60,18 @@ const NewsletterSignup = () => {
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <label htmlFor="newsletter-email" className="sr-only">Email address</label>
               <input
+                id="newsletter-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
                 required
+                aria-label="Email address"
                 className="flex-1 px-4 py-3 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
               />
+
               <button
                 type="submit"
                 disabled={loading}

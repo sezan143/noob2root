@@ -188,7 +188,7 @@ export default function CourseLearn() {
             <Link to={`/courses/${data.course.slug}`} className="text-xs text-muted-foreground hover:text-learn flex items-center gap-1">
               <ChevronLeft className="w-3 h-3" /> Course overview
             </Link>
-            <h2 className="font-heading font-semibold mt-2 text-sm">{data.course.title}</h2>
+            <p className="font-heading font-semibold mt-2 text-sm">{data.course.title}</p>
             <div className="mt-3">
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-muted-foreground">Progress</span>

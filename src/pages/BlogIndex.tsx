@@ -87,19 +87,25 @@ const BlogIndex = () => {
         {/* Search & Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <label htmlFor="blog-search" className="sr-only">Search posts</label>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <input
-              type="text"
+              id="blog-search"
+              type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search posts..."
+              aria-label="Search posts"
               className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
             />
           </div>
           <div className="flex gap-3">
+            <label htmlFor="blog-category" className="sr-only">Filter by category</label>
             <select
+              id="blog-category"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
+              aria-label="Filter by category"
               className="px-3 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:border-primary"
             >
               <option value="all">All Categories</option>
@@ -107,9 +113,12 @@ const BlogIndex = () => {
                 <option key={cat.id} value={cat.slug}>{cat.name}</option>
               ))}
             </select>
+            <label htmlFor="blog-sort" className="sr-only">Sort posts</label>
             <select
+              id="blog-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
+              aria-label="Sort posts"
               className="px-3 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:border-primary"
             >
               <option value="newest">Newest</option>
@@ -119,13 +128,16 @@ const BlogIndex = () => {
           </div>
         </div>
 
+
         {/* Posts Grid */}
+        <h2 className="sr-only">All posts</h2>
         {filteredPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
           </div>
+
         ) : (
           <div className="text-center py-20">
             <SlidersHorizontal className="w-10 h-10 text-muted-foreground mx-auto mb-4" />

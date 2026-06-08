@@ -111,9 +111,9 @@ export default function Courses() {
                     </div>
                   </div>
                   <div className="p-5 space-y-3">
-                    <h3 className="text-xl font-heading font-semibold group-hover:text-learn transition-colors">
+                    <h2 className="text-xl font-heading font-semibold group-hover:text-learn transition-colors">
                       {c.title}
-                    </h3>
+                    </h2>
                     <p className="text-sm text-muted-foreground line-clamp-2">{c.short_description}</p>
                     <div className="flex items-center justify-between pt-2 border-t border-border/50 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1.5">
