@@ -130,6 +130,19 @@ const BlogPost = () => {
     articleSection: post.categories?.name,
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${origin}/` },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${origin}/blog` },
+      ...(post.categories
+        ? [{ "@type": "ListItem", position: 3, name: post.categories.name, item: `${origin}/blog?category=${post.categories.slug}` }]
+        : []),
+      { "@type": "ListItem", position: post.categories ? 4 : 3, name: post.title, item: shareUrl },
+    ],
+  };
+
   return (
     <Layout>
       <SEO
@@ -142,7 +155,8 @@ const BlogPost = () => {
         author={post.authors?.name}
         tags={post.tags ?? []}
         canonical={`https://noobtoroot.com/blog/${post.slug}`}
-        jsonLd={articleJsonLd}
+        jsonLd={{ "@context": "https://schema.org", "@graph": [articleJsonLd, breadcrumbJsonLd] }}
+
       />
       <ReadingProgressBar />
       <article className="container mx-auto px-4 py-12">
