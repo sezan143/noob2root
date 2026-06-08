@@ -316,12 +316,12 @@ const Index = () => {
                       >
                         <div className="aspect-video overflow-hidden bg-muted relative">
                           <img
-                            src={unsplashSrc(c.cover_image, 720)}
+                            src={unsplashSrc(c.cover_image, 640)}
                             srcSet={c.cover_image ? unsplashSrcSet(c.cover_image) : undefined}
-                            sizes="(min-width: 1024px) 380px, (min-width: 768px) 45vw, 100vw"
+                            sizes="(min-width: 1024px) 380px, (min-width: 768px) 45vw, 92vw"
                             alt={c.title}
-                            width={720}
-                            height={405}
+                            width={640}
+                            height={360}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                             decoding="async"

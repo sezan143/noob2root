@@ -1,7 +1,28 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+
+/**
+ * Convert build-emitted <link rel="stylesheet" href="/assets/index-*.css">
+ * into a non-blocking preload + onload swap. The hero is painted from the
+ * critical CSS inlined in index.html, so the full stylesheet can load async
+ * without affecting LCP/FCP. Falls back gracefully via <noscript>.
+ */
+function asyncCssPlugin(): Plugin {
+  return {
+    name: "async-css",
+    apply: "build",
+    transformIndexHtml(html) {
+      return html.replace(
+        /<link rel="stylesheet"\s+(?:crossorigin\s+)?href="([^"]+\.css)">/g,
+        (_m, href) =>
+          `<link rel="preload" as="style" href="${href}" onload="this.onload=null;this.rel='stylesheet'">` +
+          `<noscript><link rel="stylesheet" href="${href}"></noscript>`,
+      );
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -12,7 +33,11 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    mode === "development" && componentTagger(),
+    asyncCssPlugin(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -25,10 +50,6 @@ export default defineConfig(({ mode }) => ({
     sourcemap: false,
     rollupOptions: {
       output: {
-        // Split heavy deps into their own chunks so the initial bundle stays small.
-        // TipTap / editor deps are intentionally NOT listed — they live only in
-        // lazy admin routes; Rollup will tree-shake them into those async chunks
-        // so they never load on the public site.
         manualChunks: {
           "react-vendor": ["react", "react-dom", "react-router-dom"],
           "query-vendor": ["@tanstack/react-query"],

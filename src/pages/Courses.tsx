@@ -91,12 +91,12 @@ export default function Courses() {
                   <div className="aspect-video bg-gradient-to-br from-learn/20 via-card to-primary/10 relative overflow-hidden">
                     {c.cover_image ? (
                       <img
-                        src={unsplashSrc(c.cover_image, 720)}
+                        src={unsplashSrc(c.cover_image, 640)}
                         srcSet={unsplashSrcSet(c.cover_image)}
-                        sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 100vw"
+                        sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 92vw"
                         alt={c.title}
-                        width={720}
-                        height={405}
+                        width={640}
+                        height={360}
                         className="w-full h-full object-cover"
                         loading="lazy"
                         decoding="async"
