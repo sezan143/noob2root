@@ -66,6 +66,58 @@
         </div>
       </div>
     </div>
+    <!-- Early LCP image discovery for blog post pages.
+         Runs in parallel with the main JS bundle download so the browser can
+         start fetching the featured image ~2-4s before React mounts. -->
+    <script>
+      (function () {
+        try {
+          var m = location.pathname.match(/^\/blog\/([^\/?#]+)\/?$/);
+          if (!m) return;
+          var slug = decodeURIComponent(m[1]);
+          var BASE = "https://arfvjnbsjroryvchknnq.supabase.co";
+          var KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyZnZqbmJzanJvcnl2Y2hrbm5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1Mjg3OTMsImV4cCI6MjA5NDEwNDc5M30.sBcBPyFRV165Dt1dGxBDuKYOxmPI_Raw9WRTTJMybHU";
+          var url = BASE + "/rest/v1/posts?select=featured_image&slug=eq." + encodeURIComponent(slug) + "&is_published=eq.true&limit=1";
+          function transform(img, w) {
+            if (!img) return "";
+            if (img.indexOf("/storage/v1/object/public/") > -1) {
+              var base = img.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
+              var sep = base.indexOf("?") > -1 ? "&" : "?";
+              return base + sep + "width=" + w + "&quality=70&resize=contain";
+            }
+            if (img.indexOf("images.unsplash.com") > -1) {
+              try {
+                var u = new URL(img);
+                u.searchParams.set("w", String(w));
+                u.searchParams.set("q", "65");
+                u.searchParams.set("auto", "format");
+                u.searchParams.set("fit", "crop");
+                u.searchParams.delete("h");
+                return u.toString();
+              } catch (e) { return img; }
+            }
+            return img;
+          }
+          fetch(url, { headers: { apikey: KEY, Authorization: "Bearer " + KEY, Accept: "application/json" } })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (d) {
+              var img = d && d[0] && d[0].featured_image;
+              if (!img) return;
+              var widths = [400, 640, 800, 1200];
+              var srcset = widths.map(function (w) { return transform(img, w) + " " + w + "w"; }).join(", ");
+              var link = document.createElement("link");
+              link.rel = "preload";
+              link.as = "image";
+              link.href = transform(img, 800);
+              link.setAttribute("imagesrcset", srcset);
+              link.setAttribute("imagesizes", "(max-width: 768px) 92vw, 720px");
+              link.setAttribute("fetchpriority", "high");
+              document.head.appendChild(link);
+            })
+            .catch(function () {});
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
