@@ -226,8 +226,19 @@ const BlogPost = () => {
             </div>
 
             {post.featured_image && (
-              <div className="rounded-xl overflow-hidden mb-8">
-                <img src={post.featured_image} alt={post.title} className="w-full aspect-video object-cover" />
+              <div className="rounded-xl overflow-hidden mb-8 bg-muted/30 aspect-video">
+                <img
+                  src={smartImg(post.featured_image, 800)}
+                  srcSet={smartSrcSet(post.featured_image, [400, 640, 800, 1200])}
+                  sizes="(max-width: 768px) 92vw, 720px"
+                  alt={post.title}
+                  width={800}
+                  height={450}
+                  fetchPriority="high"
+                  decoding="async"
+                  loading="eager"
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
 
