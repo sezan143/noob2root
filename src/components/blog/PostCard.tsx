@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Clock, Eye } from "lucide-react";
 import type { DbPost } from "@/types/database";
 
@@ -10,12 +9,8 @@ interface PostCardProps {
 
 const PostCard = ({ post, featured = false }: PostCardProps) => {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5 }}
-      className={`glass-card-hover group overflow-hidden ${featured ? "md:col-span-2 md:grid md:grid-cols-2" : ""}`}
+    <article
+      className={`glass-card-hover group overflow-hidden animate-fade-in ${featured ? "md:col-span-2 md:grid md:grid-cols-2" : ""}`}
     >
       <Link to={`/blog/${post.slug}`} className="block">
         <div className={`overflow-hidden ${featured ? "h-full min-h-[250px]" : "aspect-video"}`}>
@@ -64,7 +59,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
           </div>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 };
 
