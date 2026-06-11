@@ -78,17 +78,30 @@ const Analytics = () => {
       }
     };
 
-    // Defer analytics until the browser is idle so it never blocks LCP/FCP.
-    const ric: any = (window as any).requestIdleCallback;
-    const handle = ric
-      ? ric(boot, { timeout: 4000 })
-      : window.setTimeout(boot, 2500);
+    // Defer analytics until first user interaction OR a 6s fallback so
+    // the GTM/GA scripts (~157 KiB, ~170 ms main-thread) never block LCP/TBT.
+    let fired = false;
+    const fire = () => {
+      if (fired) return;
+      fired = true;
+      cleanup();
+      const ric: any = (window as any).requestIdleCallback;
+      if (ric) ric(boot, { timeout: 2000 });
+      else window.setTimeout(boot, 0);
+    };
+    const events = ["pointerdown", "keydown", "scroll", "touchstart"] as const;
+    const cleanup = () => {
+      events.forEach((e) => window.removeEventListener(e, fire));
+      window.clearTimeout(fallback);
+    };
+    events.forEach((e) =>
+      window.addEventListener(e, fire, { once: true, passive: true })
+    );
+    const fallback = window.setTimeout(fire, 6000);
 
     return () => {
       cancelled = true;
-      const cic: any = (window as any).cancelIdleCallback;
-      if (ric && cic) cic(handle);
-      else clearTimeout(handle as number);
+      cleanup();
     };
   }, []);
 
