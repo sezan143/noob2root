@@ -59,7 +59,7 @@ const PostCard = ({ post, featured = false }: PostCardProps) => {
           </div>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 };
 
