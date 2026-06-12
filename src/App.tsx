@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Loader2 } from "lucide-react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,7 +8,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProfileCompletionGate from "./components/auth/ProfileCompletionGate.tsx";
 import Analytics from "./components/Analytics.tsx";
 
-// Eagerly load the landing page for fastest FCP, lazy-load the rest.
+// Eagerly load the landing page so the inline hero shell in index.html
+// transitions seamlessly into the rendered React tree (no Suspense flash).
 import Index from "./pages/Index.tsx";
 
 const BlogIndex = lazy(() => import("./pages/BlogIndex.tsx"));
@@ -43,9 +43,7 @@ const AdminReferrals = lazy(() => import("./pages/admin/AdminReferrals.tsx"));
 const queryClient = new QueryClient();
 
 const RouteFallback = () => (
-  <div className="flex items-center justify-center min-h-[60vh]">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-  </div>
+  <div className="flex items-center justify-center min-h-[60vh]" aria-hidden="true" />
 );
 
 const App = () => (

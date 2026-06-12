@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.svg";
 
 const SOCIAL_KEYS = [
@@ -16,21 +15,28 @@ const Footer = () => {
   const [siteName, setSiteName] = useState("Noob to Root");
 
   useEffect(() => {
-    const fetch = async () => {
+    let cancelled = false;
+    const run = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
       const { data } = await supabase
         .from("site_settings")
         .select("key, value")
         .in("key", [...SOCIAL_KEYS.map((s) => s.key), "site_name"]);
-      if (data) {
-        const map: Record<string, string> = {};
-        data.forEach((r) => {
-          if (r.key === "site_name" && r.value) setSiteName(r.value);
-          else if (r.value) map[r.key] = r.value;
-        });
-        setSocials(map);
-      }
+      if (cancelled || !data) return;
+      const map: Record<string, string> = {};
+      data.forEach((r) => {
+        if (r.key === "site_name" && r.value) setSiteName(r.value);
+        else if (r.value) map[r.key] = r.value;
+      });
+      setSocials(map);
     };
-    fetch();
+    const ric: any = (window as any).requestIdleCallback;
+    const handle = ric ? ric(run, { timeout: 2000 }) : window.setTimeout(run, 300);
+    return () => {
+      cancelled = true;
+      if (ric && (window as any).cancelIdleCallback) (window as any).cancelIdleCallback(handle);
+      else window.clearTimeout(handle as number);
+    };
   }, []);
 
   const visibleSocials = SOCIAL_KEYS.filter((s) => socials[s.key]);

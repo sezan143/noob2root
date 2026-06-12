@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Send, CheckCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const NewsletterSignup = () => {
@@ -14,6 +13,7 @@ const NewsletterSignup = () => {
     if (!email.trim()) return;
     setLoading(true);
 
+    const { supabase } = await import("@/integrations/supabase/client");
     const { error } = await supabase
       .from("newsletter_subscribers")
       .insert({ email: email.trim() });

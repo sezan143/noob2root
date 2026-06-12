@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 
 declare global {
   interface Window {
@@ -24,6 +23,7 @@ const Analytics = () => {
     let cancelled = false;
 
     const boot = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
       const { data } = await supabase
         .from("site_settings")
         .select("key, value")

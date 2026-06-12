@@ -20,7 +20,7 @@ import SEO from "@/components/SEO";
 import PostCard from "@/components/blog/PostCard";
 import CategoryCard from "@/components/blog/CategoryCard";
 import NewsletterSignup from "@/components/blog/NewsletterSignup";
-import { supabase } from "@/integrations/supabase/client";
+// Supabase loaded dynamically inside effect to keep it off the LCP critical path.
 import { unsplashSrc, unsplashSrcSet } from "@/lib/img";
 import type { DbPost, DbCategory } from "@/types/database";
 
@@ -68,7 +68,9 @@ const Index = () => {
   const [typed, setTyped] = useState<number>(0);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchData = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
       const [postsRes, catsRes, coursesRes] = await Promise.all([
         supabase
           .from("posts")
@@ -84,12 +86,19 @@ const Index = () => {
           .order("created_at", { ascending: false })
           .limit(3),
       ]);
+      if (cancelled) return;
       setPosts((postsRes.data as DbPost[]) ?? []);
       setCategories(catsRes.data ?? []);
       setCourses((coursesRes.data as DbCourse[]) ?? []);
       setLoading(false);
     };
-    fetchData();
+    const ric: any = (window as any).requestIdleCallback;
+    const handle = ric ? ric(fetchData, { timeout: 1500 }) : window.setTimeout(fetchData, 0);
+    return () => {
+      cancelled = true;
+      if (ric && (window as any).cancelIdleCallback) (window as any).cancelIdleCallback(handle);
+      else window.clearTimeout(handle as number);
+    };
   }, []);
 
   // animated terminal reveal
