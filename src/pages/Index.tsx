@@ -253,14 +253,10 @@ const Index = () => {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FEATURES.map((f, i) => (
-              <motion.div
+            {FEATURES.map((f) => (
+              <div
                 key={f.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.45, delay: i * 0.05 }}
-                className="group relative rounded-xl border border-border bg-card/50 backdrop-blur-sm p-6 hover:border-primary/40 transition-all hover:-translate-y-1 overflow-hidden"
+                className="group relative rounded-xl border border-border bg-card/50 backdrop-blur-sm p-6 hover:border-primary/40 transition-all hover:-translate-y-1 overflow-hidden animate-fade-in"
               >
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
                 <div className="relative">
