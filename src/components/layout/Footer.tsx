@@ -49,7 +49,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">Navigate</h4>
+            <h2 className="font-heading font-semibold text-foreground mb-4 text-base">Navigate</h2>
             <div className="flex flex-col gap-2">
               {["Home", "Blog", "Categories", "About"].map((item) => (
                 <Link key={item} to={item === "Home" ? "/" : `/${item.toLowerCase()}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
@@ -60,7 +60,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">Categories</h4>
+            <h2 className="font-heading font-semibold text-foreground mb-4 text-base">Categories</h2>
             <div className="flex flex-col gap-2">
               {["AI & ML", "Web Dev", "Cybersecurity", "Cloud & DevOps"].map((cat) => (
                 <Link key={cat} to="/categories" className="text-sm text-muted-foreground hover:text-primary transition-colors">
@@ -71,7 +71,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-heading font-semibold text-foreground mb-4">Connect</h4>
+            <h2 className="font-heading font-semibold text-foreground mb-4 text-base">Connect</h2>
             <div className="flex flex-col gap-2">
               {visibleSocials.length > 0 ? (
                 visibleSocials.map((s) => (
