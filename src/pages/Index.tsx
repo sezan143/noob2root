@@ -293,14 +293,8 @@ const Index = () => {
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {courses.map((c, i) => (
-                    <motion.div
-                      key={c.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: i * 0.08 }}
-                    >
+                  {courses.map((c) => (
+                    <div key={c.id} className="animate-fade-in">
                       <Link
                         to={`/courses/${c.slug}`}
                         className="group block rounded-xl border border-border bg-card/60 overflow-hidden hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-[0_0_40px_-10px_hsl(var(--primary)/0.5)]"
@@ -337,7 +331,7 @@ const Index = () => {
                           </div>
                         </div>
                       </Link>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
