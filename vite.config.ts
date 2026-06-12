@@ -47,7 +47,10 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: "es2020",
     cssCodeSplit: true,
-    sourcemap: false,
+    cssMinify: "lightningcss",
+    sourcemap: true,
+    minify: "esbuild",
+    reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks: {
