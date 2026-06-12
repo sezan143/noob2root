@@ -35,12 +35,7 @@ const NewsletterSignup = () => {
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="glass-card p-8 md:p-12 text-center max-w-2xl mx-auto gradient-border"
-        >
+        <div className="glass-card p-8 md:p-12 text-center max-w-2xl mx-auto gradient-border animate-fade-in">
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-3">
             Stay ahead of the curve
           </h2>
@@ -49,14 +44,10 @@ const NewsletterSignup = () => {
           </p>
 
           {submitted ? (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="flex items-center justify-center gap-2 text-primary"
-            >
+            <div className="flex items-center justify-center gap-2 text-primary animate-fade-in">
               <CheckCircle className="w-5 h-5" />
               <span className="font-medium">You're in! Check your inbox.</span>
-            </motion.div>
+            </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <label htmlFor="newsletter-email" className="sr-only">Email address</label>
@@ -80,7 +71,7 @@ const NewsletterSignup = () => {
               </button>
             </form>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
