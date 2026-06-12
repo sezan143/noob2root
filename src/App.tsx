@@ -9,8 +9,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProfileCompletionGate from "./components/auth/ProfileCompletionGate.tsx";
 import Analytics from "./components/Analytics.tsx";
 
-// Eagerly load the landing page for fastest FCP, lazy-load the rest.
-import Index from "./pages/Index.tsx";
+// Lazy-load every route. The home hero is painted by the inline shell in
+// index.html so LCP doesn't wait for the page chunk.
+const Index = lazy(() => import("./pages/Index.tsx"));
 
 const BlogIndex = lazy(() => import("./pages/BlogIndex.tsx"));
 const BlogPost = lazy(() => import("./pages/BlogPost.tsx"));
