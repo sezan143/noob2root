@@ -111,22 +111,38 @@ const Index = () => {
   const featuredPosts = posts.filter((p) => p.is_featured);
   const latestPosts = posts.slice(0, 6);
 
+  const siteUrl = "https://noobtoroot.com";
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Noob to Root",
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/blog?search={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Noob to Root",
+    url: siteUrl,
+    logo: { "@type": "ImageObject", url: `${siteUrl}/og-default.jpg` },
+    sameAs: [
+      "https://twitter.com/noobtoroot",
+      "https://github.com/noobtoroot",
+    ],
+  };
+
   return (
     <Layout>
       <SEO
         title="Noob to Root — Premium Cybersecurity & Tech Tutorials"
         description="Premium hands-on tutorials & certified courses in ethical hacking, Linux, networking, DevOps & cybersecurity. From Zero to Root."
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "Noob to Root",
-          url: typeof window !== "undefined" ? window.location.origin : "",
-          potentialAction: {
-            "@type": "SearchAction",
-            target: `${typeof window !== "undefined" ? window.location.origin : ""}/blog?search={search_term_string}`,
-            "query-input": "required name=search_term_string",
-          },
-        }}
+        jsonLd={{ "@context": "https://schema.org", "@graph": [websiteJsonLd, organizationJsonLd] }}
       />
 
       {/* HERO */}
