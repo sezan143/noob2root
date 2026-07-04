@@ -8,6 +8,19 @@ const About = () => (
     <SEO
       title="About Noob to Root"
       description="Noob to Root publishes hands-on tech tutorials, ethical hacking guides, Linux, and developer walkthroughs — designed to take you from zero to root."
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        name: "About Noob to Root",
+        url: "https://noobtoroot.com/about",
+        description: "Noob to Root publishes hands-on tech tutorials, ethical hacking guides, Linux, and developer walkthroughs — designed to take you from zero to root.",
+        mainEntity: {
+          "@type": "Organization",
+          name: "Noob to Root",
+          url: "https://noobtoroot.com",
+          logo: { "@type": "ImageObject", url: "https://noobtoroot.com/og-default.jpg" },
+        },
+      }}
     />
     <div className="container mx-auto px-4 py-12">
       <motion.div
