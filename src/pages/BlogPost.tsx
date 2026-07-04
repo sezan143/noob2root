@@ -103,6 +103,12 @@ const BlogPost = () => {
   if (!post) {
     return (
       <Layout>
+        <SEO
+          title="Post not found"
+          description="The article you're looking for doesn't exist or has been unpublished."
+          canonical={`https://noobtoroot.com/blog/${slug ?? ""}`}
+          noindex
+        />
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-heading font-bold text-foreground mb-4">Post not found</h1>
           <Link to="/blog" className="text-primary hover:underline">Back to Blog</Link>
@@ -110,6 +116,7 @@ const BlogPost = () => {
       </Layout>
     );
   }
+
 
   const scrollToHeading = (id: string) => {
     const el = document.getElementById(id);

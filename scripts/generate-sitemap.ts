@@ -40,43 +40,58 @@ const staticEntries: SitemapEntry[] = [
   { path: "/referrals", changefreq: "weekly", priority: "0.5" },
 ];
 
+const isValidSlug = (s: unknown): s is string =>
+  typeof s === "string" && /^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(s.trim());
+
 async function fetchDynamic(): Promise<SitemapEntry[]> {
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     const entries: SitemapEntry[] = [];
+    const nowIso = new Date().toISOString();
 
-    const { data: posts } = await supabase
+    // Posts: published only, slug present, not scheduled in the future.
+    const { data: posts, error: postsErr } = await supabase
       .from("posts")
-      .select("slug, updated_at, published_at")
-      .eq("is_published", true);
+      .select("slug, updated_at, published_at, is_published")
+      .eq("is_published", true)
+      .not("slug", "is", null)
+      .neq("slug", "")
+      .or(`published_at.is.null,published_at.lte.${nowIso}`);
+    if (postsErr) throw postsErr;
+
+    let skippedPosts = 0;
     posts?.forEach((p: any) => {
+      if (!isValidSlug(p.slug)) { skippedPosts++; return; }
       entries.push({
-        path: `/blog/${p.slug}`,
+        path: `/blog/${p.slug.trim()}`,
         lastmod: (p.updated_at || p.published_at || "").split("T")[0] || undefined,
         changefreq: "weekly",
         priority: "0.8",
       });
     });
 
-    const { data: courses } = await supabase
+    // Courses: published only, slug present.
+    const { data: courses, error: coursesErr } = await supabase
       .from("courses")
-      .select("slug, updated_at")
-      .eq("is_published", true);
+      .select("slug, updated_at, is_published")
+      .eq("is_published", true)
+      .not("slug", "is", null)
+      .neq("slug", "");
+    if (coursesErr) throw coursesErr;
+
+    let skippedCourses = 0;
     courses?.forEach((c: any) => {
+      if (!isValidSlug(c.slug)) { skippedCourses++; return; }
+      const slug = c.slug.trim();
       const lastmod = (c.updated_at || "").split("T")[0] || undefined;
-      entries.push({
-        path: `/courses/${c.slug}`,
-        lastmod,
-        changefreq: "weekly",
-        priority: "0.8",
-      });
-      entries.push({
-        path: `/courses/${c.slug}/learn`,
-        lastmod,
-        changefreq: "weekly",
-        priority: "0.7",
-      });
+      entries.push({ path: `/courses/${slug}`, lastmod, changefreq: "weekly", priority: "0.8" });
+      entries.push({ path: `/courses/${slug}/learn`, lastmod, changefreq: "weekly", priority: "0.7" });
     });
+
+    console.log(
+      `sitemap: dynamic entries — posts=${posts?.length ?? 0} (skipped ${skippedPosts}), ` +
+      `courses=${courses?.length ?? 0} (skipped ${skippedCourses})`,
+    );
 
     // Note: /blog?category=<slug> is intentionally NOT emitted — query-string
     // variants resolve to /blog and get flagged by Google as "Alternate page
@@ -88,6 +103,7 @@ async function fetchDynamic(): Promise<SitemapEntry[]> {
     return [];
   }
 }
+
 
 function buildXml(entries: SitemapEntry[]) {
   const urls = entries.map((e) =>

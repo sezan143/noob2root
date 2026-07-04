@@ -65,10 +65,34 @@ const SEO = ({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canon} />
       <meta property="og:image" content={toAbsolute(image)} />
+      <meta property="og:image:alt" content={title} />
+      <meta property="og:locale" content="en_US" />
+
+      {/* Article-specific OG */}
+      {type === "article" && publishedAt && (
+        <meta property="article:published_time" content={publishedAt} />
+      )}
+      {type === "article" && updatedAt && (
+        <meta property="article:modified_time" content={updatedAt} />
+      )}
+      {type === "article" && author && (
+        <meta property="article:author" content={author} />
+      )}
+      {type === "article" && tags?.map((t) => (
+        <meta key={t} property="article:tag" content={t} />
+      ))}
+
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={toAbsolute(image)} />
+      <meta name="twitter:image:alt" content={title} />
 
       {jsonLd && (
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       )}
+
     </Helmet>
   );
 };
