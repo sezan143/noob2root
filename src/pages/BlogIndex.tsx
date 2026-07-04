@@ -66,6 +66,25 @@ const BlogIndex = () => {
     return result;
   }, [posts, searchQuery, selectedCategory, sortBy]);
 
+  const blogJsonLd = useMemo(() => {
+    const siteUrl = "https://noobtoroot.com";
+    return {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      name: "Noob to Root Tutorials",
+      url: `${siteUrl}/blog`,
+      description: "Browse all Noob to Root tutorials — Linux, ethical hacking, networking, DevOps, and developer guides.",
+      blogPost: posts.map((post) => ({
+        "@type": "BlogPosting",
+        headline: post.title,
+        url: `${siteUrl}/blog/${post.slug}`,
+        ...(post.published_at || post.created_at ? { datePublished: post.published_at || post.created_at } : {}),
+        ...(post.featured_image ? { image: post.featured_image } : {}),
+        ...(post.authors ? { author: { "@type": "Person", name: post.authors.name } } : {}),
+      })),
+    };
+  }, [posts]);
+
   if (loading) {
     return (
       <Layout>
