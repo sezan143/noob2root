@@ -34,6 +34,10 @@ const staticEntries: SitemapEntry[] = [
   { path: "/categories", changefreq: "weekly", priority: "0.7" },
   { path: "/courses", changefreq: "weekly", priority: "0.9" },
   { path: "/about", changefreq: "monthly", priority: "0.5" },
+  { path: "/login", changefreq: "monthly", priority: "0.3" },
+  { path: "/complete-profile", changefreq: "monthly", priority: "0.3" },
+  { path: "/profile", changefreq: "monthly", priority: "0.3" },
+  { path: "/referrals", changefreq: "weekly", priority: "0.5" },
 ];
 
 async function fetchDynamic(): Promise<SitemapEntry[]> {
@@ -59,11 +63,18 @@ async function fetchDynamic(): Promise<SitemapEntry[]> {
       .select("slug, updated_at")
       .eq("is_published", true);
     courses?.forEach((c: any) => {
+      const lastmod = (c.updated_at || "").split("T")[0] || undefined;
       entries.push({
         path: `/courses/${c.slug}`,
-        lastmod: (c.updated_at || "").split("T")[0] || undefined,
+        lastmod,
         changefreq: "weekly",
         priority: "0.8",
+      });
+      entries.push({
+        path: `/courses/${c.slug}/learn`,
+        lastmod,
+        changefreq: "weekly",
+        priority: "0.7",
       });
     });
 
