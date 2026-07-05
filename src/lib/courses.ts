@@ -69,13 +69,19 @@ export async function fetchCourseFull(slug: string) {
     .from("modules")
     .select("*")
     .eq("course_id", course.id)
+    .eq("is_published", true)
     .order("sort_order");
 
-  const { data: lessons } = await supabase
-    .from("lessons")
-    .select("*")
-    .eq("course_id", course.id)
-    .order("sort_order");
+  const publishedModuleIds = (modules ?? []).map((m: { id: string }) => m.id);
+
+  const { data: lessons } = publishedModuleIds.length
+    ? await supabase
+        .from("lessons")
+        .select("*")
+        .eq("course_id", course.id)
+        .in("module_id", publishedModuleIds)
+        .order("sort_order")
+    : { data: [] as unknown[] };
 
   return {
     course: course as unknown as Course,
