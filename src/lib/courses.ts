@@ -24,6 +24,7 @@ export type Module = {
   title: string;
   description: string | null;
   sort_order: number;
+  is_published: boolean;
 };
 
 export type Lesson = {
