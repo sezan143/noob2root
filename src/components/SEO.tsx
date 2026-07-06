@@ -53,7 +53,7 @@ const SEO = ({
   canonical,
   noindex,
 }: SEOProps) => {
-  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`.slice(0, 60);
+  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const canon = normalizeCanonical(canonical);
 
   return (
