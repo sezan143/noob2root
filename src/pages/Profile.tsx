@@ -251,7 +251,7 @@ export default function Profile() {
 
   return (
     <Layout>
-      <SEO title="My profile — Noob to Root" description="Manage your account, view your courses and certificates." />
+      <SEO title="My profile — Noob to Root" description="Manage your account, view your courses and certificates." noindex />
       <div className="container max-w-5xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="glass-card p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6 mb-8">

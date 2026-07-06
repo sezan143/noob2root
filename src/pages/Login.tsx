@@ -69,6 +69,7 @@ export default function Login() {
       <SEO
         title={mode === "signin" ? "Sign in — Noob to Root" : "Create account — Noob to Root"}
         description="Access your courses, certificates, and learning progress on Noob to Root."
+        noindex
       />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10 pointer-events-none" />
       <Link

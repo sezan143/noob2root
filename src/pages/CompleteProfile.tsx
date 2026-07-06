@@ -160,7 +160,7 @@ export default function CompleteProfile() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      <SEO title="Complete your profile — Noob to Root" description="Finish setting up your account to start learning." />
+      <SEO title="Complete your profile — Noob to Root" description="Finish setting up your account to start learning." noindex />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10 pointer-events-none" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}

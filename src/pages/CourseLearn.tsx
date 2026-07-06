@@ -180,7 +180,7 @@ export default function CourseLearn() {
 
   return (
     <Layout>
-      <SEO title={`Learn — ${data.course.title}`} description={data.course.short_description ?? ""} />
+      <SEO title={`Learn — ${data.course.title}`} description={data.course.short_description ?? ""} noindex />
       <div className="pt-20 min-h-screen flex">
         {/* Sidebar */}
         <aside className="hidden lg:flex flex-col w-80 border-r border-border bg-card/40 backdrop-blur-xl sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">

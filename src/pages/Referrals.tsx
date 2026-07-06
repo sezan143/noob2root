@@ -111,6 +111,7 @@ export default function Referrals() {
       <SEO
         title="Referrals — Noob to Root"
         description="Invite friends and earn free certificates or credit toward paid certificates."
+        noindex
       />
       <div className="container max-w-5xl mx-auto px-4 py-12">
         <div className="mb-8">
