@@ -26,10 +26,17 @@ const toAbsolute = (url?: string) => {
 };
 
 const normalizeCanonical = (canonical?: string): string => {
-  if (!canonical) return SITE_URL;
-  let clean = canonical.replace(/\/$/, ""); // remove trailing slash
+  let raw = canonical;
+  if (!raw && typeof window !== "undefined") {
+    // Auto-derive from current path so every route self-canonicalizes
+    // instead of falling back to the homepage.
+    raw = window.location.pathname;
+  }
+  if (!raw) return SITE_URL;
+  // Strip query strings & hash — canonical should point at the clean URL.
+  let clean = raw.split("#")[0].split("?")[0].replace(/\/+$/, "");
   if (!clean.startsWith("http")) clean = `${SITE_URL}${clean.startsWith("/") ? "" : "/"}${clean}`;
-  return clean;
+  return clean || SITE_URL;
 };
 
 const SEO = ({
