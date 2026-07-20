@@ -1,174 +1,230 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://noobtoroot.com/</loc>
+    <lastmod>2026-07-20T21:15:25.602Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog</loc>
+    <lastmod>2026-07-20T21:15:25.602Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://noobtoroot.com/categories</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://noobtoroot.com/courses</loc>
+    <lastmod>2026-07-20T21:15:25.602Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://noobtoroot.com/categories</loc>
+    <lastmod>2026-07-20T21:15:25.602Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://noobtoroot.com/about</loc>
+    <lastmod>2026-07-20T21:15:25.602Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/complete-profile</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/profile</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://noobtoroot.com/referrals</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-07-20T21:15:25.602Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/kali-linux-monitor-mode-packet-injection-fix</loc>
-    <lastmod>2026-05-16</lastmod>
+    <lastmod>2026-05-16T21:52:33.342Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1778968068896-k48ckpyvzzr.webp</image:loc>
+      <image:title>Fixing Packet Injection &amp; Monitor Mode on Kali Linux (2026 Ultimate Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/agentic-ai-red-teaming-prompt-injection</loc>
-    <lastmod>2026-05-20</lastmod>
+    <lastmod>2026-05-20T21:11:35.602Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779309529976-igg8f4q0vh.webp</image:loc>
+      <image:title>Red Teaming Agentic AI: Exploiting Indirect Prompt Injection (2026 Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/active-directory-enumeration-cheat-sheet</loc>
-    <lastmod>2026-05-20</lastmod>
+    <lastmod>2026-05-20T21:15:14.879Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1778970428015-pizz461d9gc.webp</image:loc>
+      <image:title>Active Directory Enumeration Cheat Sheet (2026 Red Team Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/linux-privilege-escalation-masterclass-abusing-suid-and-posix-capabilities-2026-guide</loc>
-    <lastmod>2026-05-20</lastmod>
+    <lastmod>2026-05-20T22:10:01.899Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779314915137-brauir7zunm.webp</image:loc>
+      <image:title>Linux Privilege Escalation Masterclass: Abusing SUID and POSIX Capabilities (2026 Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/cloud-red-teaming-aws-iam-privilege-escalation</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-05-25T05:03:52.009Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779314092135-ffd730rnoe.webp</image:loc>
+      <image:title>Cloud Red Teaming: Exploiting IAM Misconfigurations for AWS Privilege Escalation (2026 Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/breaking-wpa3-sae-handshake-cracking-guide</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-05-25T05:04:19.971Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779313144429-sng02c9f6r.webp</image:loc>
+      <image:title>Breaking WPA3: Cracking the SAE Handshake (2026 Wireless Security Masterclass)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/api-penetration-testing-bola-jwt-guide</loc>
-    <lastmod>2026-07-06</lastmod>
+    <lastmod>2026-07-06T10:43:36.079Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779312853660-svfvaav3gbo.webp</image:loc>
+      <image:title>API Penetration Testing Masterclass: Hunting BOLA and Token Flaws (2026 Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/red-teaming-for-beginners-step-by-step</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-05-25T04:03:31.575Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779681804251-3aqjbxwh9zs.webp</image:loc>
+      <image:title>Red Teaming for Beginners: Step-by-Step Roadmap (2026)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/how-to-start-red-teaming-with-no-experience</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-05-25T04:13:08.970Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779682379559-zjz2k56cnpq.webp</image:loc>
+      <image:title>How to Start Red Teaming With No Experience (2026 Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/what-is-red-teaming-in-cybersecurity-explained</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-05-25T04:47:05.747Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779684419951-0vg0ombloxk.webp</image:loc>
+      <image:title>What Is Red Teaming in Cybersecurity? (Explained Simply &amp; Completely)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/devsecops-cicd-pipeline-supply-chain-exploitation-guide</loc>
-    <lastmod>2026-05-25</lastmod>
+    <lastmod>2026-05-25T05:01:52.923Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1779316340744-76j1yi09sox.webp</image:loc>
+      <image:title>DevSecOps Red Teaming: Exploiting CI/CD Pipeline Vulnerabilities and Supply Chain Flaws</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/blackbird-osint-tool-tutorial-configuration</loc>
-    <lastmod>2026-07-06</lastmod>
+    <lastmod>2026-07-06T00:27:27.531Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1783297633562-qz0gvcuxqug.webp</image:loc>
+      <image:title>How to Install and Configure Blackbird OSINT Tool for Fast Username Reconnaissance</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/how-to-use-clamav-on-linux</loc>
-    <lastmod>2026-07-09</lastmod>
+    <lastmod>2026-07-09T10:45:18.085Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1783593708523-wip7jr5bsj9.webp</image:loc>
+      <image:title>How to Use ClamAV on Linux: Installation, Scanning &amp; Automation Guide</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/how-to-build-a-pentesting-lab-at-home</loc>
-    <lastmod>2026-07-13</lastmod>
+    <lastmod>2026-07-13T22:23:04.528Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1783980433722-0073vyfc0xo7e.webp</image:loc>
+      <image:title>How to Build a Pentesting Lab at Home (2026 Step-by-Step Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/netcat-reverse-shell-cheat-sheet</loc>
-    <lastmod>2026-07-13</lastmod>
+    <lastmod>2026-07-13T22:09:07.129Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1783587665652-1wujfxd2uk.webp</image:loc>
+      <image:title>Netcat Reverse Shell Cheat Sheet: Commands, Syntax &amp; Fixes for Every Version</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/kali-linux-wsl-install-guide</loc>
-    <lastmod>2026-07-13</lastmod>
+    <lastmod>2026-07-13T22:19:48.715Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1783981183864-fuh33fu2kpb.webp</image:loc>
+      <image:title>How to Install Kali Linux on WSL (Windows Subsystem for Linux) — 2026 Guide</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/blog/arsenal-ng-cheat-sheet-tool-kali-linux</loc>
-    <lastmod>2026-07-13</lastmod>
+    <lastmod>2026-07-13T22:45:07.258Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://arfvjnbsjroryvchknnq.supabase.co/storage/v1/object/public/post-images/1783982703213-qy9isuquuo.webp</image:loc>
+      <image:title>Arsenal-ng: The Kali Linux Cheat Sheet Tool With 200+ Commands (Install &amp; Usage Guide)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/courses/linux-basics-from-zero-to-comfortable</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-06-07T22:19:49.694Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/courses/linux-basics-from-zero-to-comfortable/learn</loc>
-    <lastmod>2026-06-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=1200&amp;h=675&amp;fit=crop</image:loc>
+      <image:title>Linux Basics: From Zero to Comfortable</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://noobtoroot.com/courses/master-the-terminal-and-bash</loc>
-    <lastmod>2026-06-07</lastmod>
+    <lastmod>2026-06-07T22:22:12.585Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://noobtoroot.com/courses/master-the-terminal-and-bash/learn</loc>
-    <lastmod>2026-06-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1629904853716-f0bc54eea481?w=1200&amp;h=675&amp;fit=crop</image:loc>
+      <image:title>Master the Terminal &amp; Bash</image:title>
+    </image:image>
   </url>
 </urlset>
