@@ -49,7 +49,10 @@ const NewsletterSignup = () => {
               <span className="font-medium">You're in! Check your inbox.</span>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <form
+              onSubmit={handleSubmit}
+              className="flex items-center gap-2 max-w-md mx-auto p-1.5 rounded-lg bg-muted border border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all"
+            >
               <label htmlFor="newsletter-email" className="sr-only">Email address</label>
               <input
                 id="newsletter-email"
@@ -59,13 +62,13 @@ const NewsletterSignup = () => {
                 placeholder="your@email.com"
                 required
                 aria-label="Email address"
-                className="flex-1 px-4 py-3 rounded-lg bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm"
+                className="flex-1 min-w-0 bg-transparent px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none text-sm"
               />
 
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 neon-glow disabled:opacity-50"
+                className="shrink-0 whitespace-nowrap px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {loading ? "..." : "Subscribe"} <Send className="w-4 h-4" />
               </button>
