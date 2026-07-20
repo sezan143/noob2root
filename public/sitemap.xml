@@ -64,12 +64,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://noobtoroot.com/blog/api-penetration-testing-bola-jwt-guide</loc>
-    <lastmod>2026-05-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://noobtoroot.com/blog/linux-privilege-escalation-masterclass-abusing-suid-and-posix-capabilities-2026-guide</loc>
     <lastmod>2026-05-20</lastmod>
     <changefreq>weekly</changefreq>
@@ -84,6 +78,12 @@
   <url>
     <loc>https://noobtoroot.com/blog/breaking-wpa3-sae-handshake-cracking-guide</loc>
     <lastmod>2026-05-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/blog/api-penetration-testing-bola-jwt-guide</loc>
+    <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -114,6 +114,36 @@
   <url>
     <loc>https://noobtoroot.com/blog/blackbird-osint-tool-tutorial-configuration</loc>
     <lastmod>2026-07-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/blog/how-to-use-clamav-on-linux</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/blog/how-to-build-a-pentesting-lab-at-home</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/blog/netcat-reverse-shell-cheat-sheet</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/blog/kali-linux-wsl-install-guide</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://noobtoroot.com/blog/arsenal-ng-cheat-sheet-tool-kali-linux</loc>
+    <lastmod>2026-07-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
